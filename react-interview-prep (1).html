@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React Interview Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26; --border:#2a2a3e;
+    --accent:#7c6aff; --accent2:#ff6b6b; --accent3:#4ecdc4; --accent4:#ffd93d;
+    --text:#e8e8f0; --text-muted:#8888a8; --code-bg:#0d0d18; --green:#5cffa1;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;line-height:1.6;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.35}
+
+  /* HEADER */
+  header{position:relative;padding:80px 40px 60px;overflow:hidden;border-bottom:1px solid var(--border)}
+  .header-glow{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(124,106,255,.18) 0%,transparent 70%);pointer-events:none}
+  .header-inner{max-width:1200px;margin:0 auto;position:relative}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,106,255,.12);border:1px solid rgba(124,106,255,.3);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
+  .badge-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(42px,7vw,88px);line-height:.95;font-style:italic;color:#fff;margin-bottom:8px}
+  h1 span{color:var(--accent)}
+  .header-sub{font-size:clamp(14px,2vw,18px);color:var(--text-muted);margin-top:20px;max-width:560px;font-weight:400}
+  .tag-row{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px}
+  .nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .nav-inner::-webkit-scrollbar{display:none}
+  .nav-btn{display:flex;align-items:center;gap:8px;padding:16px 20px;background:none;border:none;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.02em}
+  .nav-btn:hover,.nav-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+  .nav-num{width:20px;height:20px;background:var(--surface2);border-radius:4px;font-size:10px;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+
+  /* MAIN & SECTIONS */
+  main{max-width:1200px;margin:0 auto;padding:60px 40px}
+  .section{display:none;animation:fadeUp .4s ease}
+  .section.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .section-header{margin-bottom:48px}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .section-title{font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,48px);font-style:italic;color:#fff;line-height:1.1}
+  .section-desc{color:var(--text-muted);font-size:15px;max-width:600px;margin-top:12px;font-weight:400}
+
+  /* CARDS */
+  .grid{display:grid;gap:20px}
+  .grid-2{grid-template-columns:repeat(auto-fit,minmax(440px,1fr))}
+  .grid-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:rgba(124,106,255,.4);transform:translateY(-2px)}
+  .card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px}
+  .card h3{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px}
+  .card p{font-size:14px;color:var(--text-muted);line-height:1.7;font-weight:400}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:28px;width:fit-content;flex-wrap:wrap}
+  .tab-btn{padding:8px 20px;background:none;border:none;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:7px;transition:all .2s}
+  .tab-btn.active{background:var(--accent);color:#fff}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+
+  /* CODE BLOCKS */
+  .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+  .code-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--surface2);border-bottom:1px solid var(--border)}
+  .code-title{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.05em}
+  .code-dots{display:flex;gap:6px}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot:nth-child(1){background:#ff5f57}
+  .code-dot:nth-child(2){background:#febc2e}
+  .code-dot:nth-child(3){background:#28c840}
+  pre{padding:24px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;color:#c5c8e0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+  .kw{color:#c792ea}.fn{color:#82aaff}.str{color:#c3e88d}.cmt{color:#546e7a;font-style:italic}.num{color:#f78c6c}.var{color:#ffcb6b}.tag{color:#f07178}.attr{color:#c792ea}.hk{color:var(--accent3)}
+
+  /* PILLS */
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600;margin:4px;border:1px solid}
+  .pill-purple{background:rgba(124,106,255,.1);border-color:rgba(124,106,255,.3);color:var(--accent)}
+  .pill-red{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.3);color:var(--accent2)}
+  .pill-teal{background:rgba(78,205,196,.1);border-color:rgba(78,205,196,.3);color:var(--accent3)}
+  .pill-yellow{background:rgba(255,217,61,.1);border-color:rgba(255,217,61,.3);color:var(--accent4)}
+  .pill-green{background:rgba(92,255,161,.1);border-color:rgba(92,255,161,.3);color:var(--green)}
+
+  /* BOXES */
+  .highlight-box{background:rgba(124,106,255,.07);border:1px solid rgba(124,106,255,.2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text);font-weight:400;line-height:1.8}
+  .highlight-box strong{color:var(--accent)}
+  .warn-box{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);border-left:3px solid var(--accent2);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text);font-weight:400;line-height:1.8}
+  .warn-box strong{color:var(--accent2)}
+  .tip-box{background:rgba(78,205,196,.07);border:1px solid rgba(78,205,196,.2);border-left:3px solid var(--accent3);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text);font-weight:400;line-height:1.8}
+  .tip-box strong{color:var(--accent3)}
+  .yellow-box{background:rgba(255,217,61,.07);border:1px solid rgba(255,217,61,.2);border-left:3px solid var(--accent4);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text);font-weight:400;line-height:1.8}
+  .yellow-box strong{color:var(--accent4)}
+
+  /* DEFINITION BLOCK */
+  .def-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin:20px 0}
+  .def-term{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--accent);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+  .def-text{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:400}
+  .def-text strong{color:var(--text)}
+
+  /* TABLES */
+  .compare-table{width:100%;border-collapse:collapse;font-size:14px;margin:24px 0;font-weight:400}
+  .compare-table th{background:var(--surface2);padding:14px 20px;text-align:left;font-weight:700;font-size:13px;color:var(--text-muted);letter-spacing:.05em;border-bottom:1px solid var(--border)}
+  .compare-table td{padding:14px 20px;border-bottom:1px solid rgba(42,42,62,.5);vertical-align:top;color:var(--text-muted);line-height:1.6}
+  .compare-table td:first-child{color:#fff;font-weight:600;font-family:'DM Mono',monospace;font-size:13px}
+  .compare-table tr:hover td{background:rgba(124,106,255,.04)}
+
+  /* LIFECYCLE FLOW */
+  .lifecycle-flow{display:flex;flex-direction:column;gap:0;position:relative;padding-left:24px;margin:24px 0}
+  .lifecycle-flow::before{content:'';position:absolute;left:7px;top:12px;bottom:12px;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent3))}
+  .lf-item{display:flex;align-items:flex-start;gap:16px;padding:16px 0;position:relative}
+  .lf-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);position:absolute;left:-24px;top:20px;flex-shrink:0}
+  .lf-body{flex:1}
+  .lf-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;font-family:'DM Mono',monospace}
+  .lf-desc{font-size:13px;color:var(--text-muted);font-weight:400;line-height:1.7}
+
+  /* QUIZ */
+  .quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px}
+  .quiz-q{font-size:16px;font-weight:600;color:#fff;margin-bottom:20px}
+  .quiz-options{display:flex;flex-direction:column;gap:10px}
+  .quiz-opt{padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-size:14px;color:var(--text);text-align:left;transition:all .2s;font-weight:500}
+  .quiz-opt:hover{border-color:var(--accent);background:rgba(124,106,255,.08)}
+  .quiz-opt.correct{border-color:var(--green);background:rgba(92,255,161,.1);color:var(--green)}
+  .quiz-opt.wrong{border-color:var(--accent2);background:rgba(255,107,107,.1);color:var(--accent2)}
+  .quiz-feedback{margin-top:16px;padding:14px 18px;border-radius:10px;font-size:14px;display:none;font-weight:400;line-height:1.7}
+  .quiz-feedback.show{display:block}
+  .quiz-feedback.correct{background:rgba(92,255,161,.1);border:1px solid rgba(92,255,161,.3);color:var(--green)}
+  .quiz-feedback.wrong{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--accent2)}
+
+  /* TYPOGRAPHY */
+  .divider{border:none;border-top:1px solid var(--border);margin:36px 0}
+  h2{font-size:22px;font-weight:700;color:#fff;margin:32px 0 14px}
+  h2:first-child{margin-top:0}
+  h3.sub{font-size:16px;font-weight:700;color:#fff;margin:24px 0 10px}
+  p.body{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:400;margin-bottom:14px}
+  ul,ol{padding-left:20px;color:var(--text-muted);font-size:14px;line-height:1.9;font-weight:400}
+  li{margin-bottom:5px}
+  li strong{color:var(--text)}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code.ic{font-family:'DM Mono',monospace;font-size:12px;background:var(--surface2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);color:var(--accent3)}
+
+  /* LAYOUT */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .full{grid-column:1/-1}
+
+  /* CONCEPT SUMMARY STRIP */
+  .concept-strip{background:linear-gradient(135deg,rgba(124,106,255,.1),rgba(78,205,196,.06));border:1px solid rgba(124,106,255,.2);border-radius:14px;padding:20px 24px;margin:20px 0;display:flex;gap:16px;align-items:flex-start}
+  .cs-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+  .cs-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px}
+  .cs-text{font-size:13px;color:var(--text-muted);line-height:1.75;font-weight:400}
+  .cs-text strong{color:var(--text)}
+
+  /* STEP STRIP */
+  .steps{counter-reset:step;display:flex;flex-direction:column;gap:16px;margin:20px 0}
+  .step{display:flex;gap:16px;align-items:flex-start;counter-increment:step}
+  .step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .step-body{flex:1}
+  .step-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+  .step-text{font-size:13px;color:var(--text-muted);line-height:1.7;font-weight:400}
+  .step-text strong{color:var(--text)}
+
+  /* MEMORY AID */
+  .memory-aid{background:rgba(255,217,61,.06);border:1px solid rgba(255,217,61,.2);border-radius:14px;padding:20px 24px;margin:20px 0}
+  .ma-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent4);margin-bottom:8px}
+  .ma-text{font-size:14px;color:var(--text);line-height:1.8;font-weight:400}
+  .ma-text strong{color:var(--accent4)}
+
+  /* INTERVIEW ANSWER BOX */
+  .interview-box{background:rgba(92,255,161,.05);border:1px solid rgba(92,255,161,.2);border-radius:14px;padding:20px 24px;margin:20px 0}
+  .ib-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+  .ib-text{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:400}
+  .ib-text strong{color:var(--text)}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:32px 40px;text-align:center;color:var(--text-muted);font-size:13px;font-weight:400}
+
+  @media(max-width:768px){
+    header,main{padding-left:20px;padding-right:20px}
+    nav{padding:0 20px}
+    .grid-2,.two-col,.three-col{grid-template-columns:1fr}
+    .tabs{width:100%}
+    .tab-btn{padding:8px 14px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-glow"></div>
+  <div class="header-inner">
+    <div class="badge"><span class="badge-dot"></span> Interview Prep Guide</div>
+    <h1>React<br><span>Interview</span><br>Mastery</h1>
+    <p class="header-sub">A deep-dive study guide with full definitions, concept explanations, working examples, and interview-ready answers for every topic.</p>
+    <div class="tag-row">
+      <span class="pill pill-purple">JavaScript Essentials</span>
+      <span class="pill pill-red">Core React</span>
+      <span class="pill pill-teal">Hooks</span>
+      <span class="pill pill-yellow">Optimization</span>
+      <span class="pill pill-green">Coding Rounds</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showSection('js',this)"><span class="nav-num">1</span> JS Prerequisites</button>
+    <button class="nav-btn" onclick="showSection('core',this)"><span class="nav-num">2</span> Core React</button>
+    <button class="nav-btn" onclick="showSection('hooks',this)"><span class="nav-num">3</span> Hooks Mastery</button>
+    <button class="nav-btn" onclick="showSection('advanced',this)"><span class="nav-num">4</span> Advanced & Optimization</button>
+    <button class="nav-btn" onclick="showSection('coding',this)"><span class="nav-num">5</span> Coding Rounds</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)"><span class="nav-num">✦</span> Quick Quiz</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1 — JAVASCRIPT PREREQUISITES
+═══════════════════════════════════════════════ -->
+<div class="section active" id="js">
+  <div class="section-header">
+    <div class="section-label">Section 01</div>
+    <div class="section-title">Essential JavaScript<br>Prerequisites</div>
+    <p class="section-desc">Before React makes sense, these JS concepts must be second nature. React is built on top of all of them.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('js','closures',this)">Closures</button>
+    <button class="tab-btn" onclick="showTab('js','arrays',this)">Array Methods</button>
+    <button class="tab-btn" onclick="showTab('js','destructure',this)">Destructuring & Spread</button>
+    <button class="tab-btn" onclick="showTab('js','async',this)">Async JS</button>
+    <button class="tab-btn" onclick="showTab('js','scope',this)">Scope & Hoisting</button>
+    <button class="tab-btn" onclick="showTab('js','proto',this)">Prototype & this</button>
+  </div>
+
+  <!-- ── CLOSURES ── -->
+  <div class="tab-content active" id="js-closures">
+    <div class="def-block">
+      <div class="def-term">Definition</div>
+      <div class="def-text">A <strong>closure</strong> is a function that <strong>retains access to its lexical scope</strong> — the variables declared in the environment where it was created — even after that outer function has finished executing and returned. In JavaScript, every time you create a function inside another function, you create a closure. The inner function carries a "backpack" of references to the outer variables, not copies of their values.</div>
+    </div>
+
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">A closure is formed when an inner function references a variable from an outer function's scope. Even after the outer function returns, the inner function keeps a live reference — not a snapshot — to those variables. This is fundamental to React because <strong>every hook callback (useEffect, useCallback, event handlers) is a closure</strong> that closes over the component's current state and props values at the time it was created.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Why Closures Matter in React</h2>
+        <p class="body">React hooks are entirely built on closure mechanics. When you call <code class="ic">useState</code>, React gives you a getter (<code class="ic">count</code>) and a setter (<code class="ic">setCount</code>). The setter is a closure that knows which state slot to update. When your event handler captures <code class="ic">count</code>, it forms a closure over that particular render's value.</p>
+
+        <h3 class="sub">Three Key React Use-Cases</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">useState internals</div><div class="step-text">Each render's setter function closes over the correct memory slot in React's internal fiber.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">useEffect cleanup</div><div class="step-text">The cleanup function closes over the subscription/timer reference created during setup, so it can cancel the right one.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Custom hooks</div><div class="step-text">All custom hook logic is a series of closures sharing common outer state variables.</div></div></div>
+        </div>
+
+        <div class="warn-box">
+          <strong>The Stale Closure Problem</strong><br>
+          When a <code class="ic">useEffect</code> with an empty dependency array <code class="ic">[]</code> captures a state variable, it captures the <em>initial</em> value (e.g. <code class="ic">count = 0</code>) and <strong>never sees updates</strong>. This is the most common React bug. Fix it by:<br>
+          • Adding the variable to the dependency array<br>
+          • Using the functional updater: <code class="ic">setCount(prev => prev + 1)</code><br>
+          • Using <code class="ic">useRef</code> to hold a mutable reference
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">CLOSURE — EXAMPLE 1: COUNTER FACTORY</div></div>
+          <pre><span class="cmt">// makeCounter is a closure factory</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>(<span class="var">start</span> = <span class="num">0</span>) {
+  <span class="kw">let</span> <span class="var">count</span> = <span class="var">start</span>; <span class="cmt">// outer variable — "captured"</span>
+
+  <span class="kw">return</span> {
+    increment: () => ++<span class="var">count</span>,
+    decrement: () => --<span class="var">count</span>,
+    reset:     () => { <span class="var">count</span> = <span class="var">start</span>; },
+    getCount:  () => <span class="var">count</span>,
+  };
+}
+
+<span class="kw">const</span> <span class="var">c1</span> = <span class="fn">makeCounter</span>(<span class="num">5</span>);
+<span class="var">c1</span>.increment(); <span class="cmt">// 6</span>
+<span class="var">c1</span>.increment(); <span class="cmt">// 7</span>
+<span class="var">c1</span>.reset();     <span class="cmt">// back to 5</span>
+
+<span class="cmt">// Each call to makeCounter creates a NEW closure
+// c1 and c2 have completely separate 'count' vars</span>
+<span class="kw">const</span> <span class="var">c2</span> = <span class="fn">makeCounter</span>(<span class="num">100</span>);
+<span class="var">c2</span>.getCount(); <span class="cmt">// 100 — independent of c1</span></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">CLOSURE — EXAMPLE 2: STALE CLOSURE BUG</div></div>
+          <pre><span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="kw">const</span> [<span class="var">count</span>, <span class="var">setCount</span>] = <span class="hk">useState</span>(<span class="num">0</span>);
+
+  <span class="cmt">// ❌ BUG: count is always 0 inside here
+  //    because the closure captured the initial render</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="var">id</span> = <span class="fn">setInterval</span>(() => {
+      <span class="fn">setCount</span>(<span class="var">count</span> + <span class="num">1</span>); <span class="cmt">// always 0 + 1 = 1</span>
+    }, <span class="num">1000</span>);
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(<span class="var">id</span>);
+  }, []); <span class="cmt">// empty deps → stale closure!</span>
+
+  <span class="cmt">// ✅ FIX: functional updater avoids closure issue</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="var">id</span> = <span class="fn">setInterval</span>(() => {
+      <span class="fn">setCount</span>(<span class="var">prev</span> => <span class="var">prev</span> + <span class="num">1</span>); <span class="cmt">// ✓ always fresh</span>
+    }, <span class="num">1000</span>);
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(<span class="var">id</span>);
+  }, []);
+
+  <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;{<span class="var">count</span>}&lt;/<span class="tag">p</span>&gt;;
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="memory-aid">
+      <div class="ma-label">Memory Aid</div>
+      <div class="ma-text">Think of a closure as a <strong>function + its backpack</strong>. The backpack contains live references to outer variables. Every function in JavaScript automatically carries this backpack. The danger comes when the backpack is packed at creation time but you forget its contents can become stale.</div>
+    </div>
+  </div>
+
+  <!-- ── ARRAY METHODS ── -->
+  <div class="tab-content" id="js-arrays">
+    <div class="def-block">
+      <div class="def-term">Definition</div>
+      <div class="def-text"><strong>Array methods</strong> like <code class="ic">.map()</code>, <code class="ic">.filter()</code>, and <code class="ic">.reduce()</code> are <strong>higher-order functions</strong> — they accept a callback function and return a new array (or value) without modifying the original. In React, this immutability is critical: React detects changes by reference equality, so mutating an array directly will not trigger a re-render.</div>
+    </div>
+
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">In React, all state updates must be <strong>immutable</strong>. Array methods like <code class="ic">.map()</code>, <code class="ic">.filter()</code>, and spread operator return new arrays instead of mutating the existing one. This lets React detect the change via reference comparison (<code class="ic">oldArray !== newArray</code>) and schedule a re-render. Mutating state directly (e.g. <code class="ic">arr.push()</code>) produces the same reference, so React sees no change and won't re-render.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>.map() — Transform Every Item</h2>
+        <p class="body"><code class="ic">.map(callback)</code> iterates over every element, passes it to the callback, and builds a <strong>new array</strong> from the return values. The original array is untouched. Length stays the same. In React, this is used to render lists of JSX elements and to update a single item inside a state array.</p>
+        <ul>
+          <li><strong>Input:</strong> Array of N items</li>
+          <li><strong>Output:</strong> New array of N items (transformed)</li>
+          <li><strong>Use in React:</strong> Render lists, update one item by id</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">.MAP() — 3 REACT PATTERNS</div></div>
+          <pre><span class="cmt">// 1. Render a list</span>
+<span class="kw">const</span> <span class="var">users</span> = [{<span class="var">id</span>:<span class="num">1</span>,<span class="var">name</span>:<span class="str">'Alice'</span>},{<span class="var">id</span>:<span class="num">2</span>,<span class="var">name</span>:<span class="str">'Bob'</span>}];
+<span class="kw">return</span> &lt;<span class="tag">ul</span>&gt;{<span class="var">users</span>.<span class="fn">map</span>(<span class="var">u</span> => &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">u</span>.id}&gt;{<span class="var">u</span>.name}&lt;/<span class="tag">li</span>&gt;)}&lt;/<span class="tag">ul</span>&gt;;
+
+<span class="cmt">// 2. Update one item immutably</span>
+<span class="fn">setTodos</span>(<span class="var">todos</span>.<span class="fn">map</span>(<span class="var">t</span> =>
+  <span class="var">t</span>.id === <span class="var">targetId</span>
+    ? { ...<span class="var">t</span>, <span class="var">completed</span>: !<span class="var">t</span>.completed } <span class="cmt">// new obj</span>
+    : <span class="var">t</span>                                      <span class="cmt">// unchanged</span>
+));
+
+<span class="cmt">// 3. Transform API data before display</span>
+<span class="kw">const</span> <span class="var">prices</span> = <span class="var">products</span>.<span class="fn">map</span>(<span class="var">p</span> => ({
+  ...<span class="var">p</span>,
+  <span class="var">displayPrice</span>: <span class="str">`$${<span class="var">p</span>.price.<span class="fn">toFixed</span>(<span class="num">2</span>)}`</span>
+}));</pre>
+        </div>
+
+        <h2>.filter() — Keep Matching Items</h2>
+        <p class="body"><code class="ic">.filter(callback)</code> builds a new array containing only the elements for which the callback returns <code class="ic">true</code>. Length may shrink. The original array is untouched.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">.FILTER() — 3 REACT PATTERNS</div></div>
+          <pre><span class="cmt">// 1. Delete item from state</span>
+<span class="fn">setUsers</span>(<span class="var">users</span>.<span class="fn">filter</span>(<span class="var">u</span> => <span class="var">u</span>.id !== <span class="var">deletedId</span>));
+
+<span class="cmt">// 2. Search/filter list</span>
+<span class="kw">const</span> <span class="var">filtered</span> = <span class="var">items</span>.<span class="fn">filter</span>(<span class="var">i</span> =>
+  <span class="var">i</span>.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(<span class="var">query</span>.<span class="fn">toLowerCase</span>())
+);
+
+<span class="cmt">// 3. Show only active items</span>
+<span class="kw">const</span> <span class="var">activeTodos</span> = <span class="var">todos</span>.<span class="fn">filter</span>(<span class="var">t</span> => !<span class="var">t</span>.completed);
+<span class="kw">const</span> <span class="var">doneTodos</span>   = <span class="var">todos</span>.<span class="fn">filter</span>(<span class="var">t</span> =>  <span class="var">t</span>.completed);</pre>
+        </div>
+      </div>
+      <div>
+        <h2>.reduce() — Accumulate to Any Value</h2>
+        <p class="body"><code class="ic">.reduce(callback, initialValue)</code> iterates the array, maintaining a running "accumulator" that your callback updates each step. It can produce any type: a number, string, object, or even another array. It is the most powerful but most misunderstood of the three.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">.REDUCE() — 4 REACT PATTERNS</div></div>
+          <pre><span class="cmt">// 1. Sum cart total</span>
+<span class="kw">const</span> <span class="var">total</span> = <span class="var">cart</span>.<span class="fn">reduce</span>(
+  (<span class="var">acc</span>, <span class="var">item</span>) => <span class="var">acc</span> + <span class="var">item</span>.price * <span class="var">item</span>.qty, <span class="num">0</span>
+);
+
+<span class="cmt">// 2. Group items by category</span>
+<span class="kw">const</span> <span class="var">grouped</span> = <span class="var">products</span>.<span class="fn">reduce</span>((<span class="var">acc</span>, <span class="var">p</span>) => {
+  <span class="kw">const</span> <span class="var">key</span> = <span class="var">p</span>.category;
+  <span class="kw">return</span> { ...<span class="var">acc</span>, [<span class="var">key</span>]: [...(<span class="var">acc</span>[<span class="var">key</span>] ?? []), <span class="var">p</span>] };
+}, {});
+<span class="cmt">// { Electronics: [...], Clothing: [...] }</span>
+
+<span class="cmt">// 3. Convert array to lookup map</span>
+<span class="kw">const</span> <span class="var">byId</span> = <span class="var">users</span>.<span class="fn">reduce</span>((<span class="var">acc</span>, <span class="var">u</span>) => {
+  <span class="var">acc</span>[<span class="var">u</span>.id] = <span class="var">u</span>;
+  <span class="kw">return</span> <span class="var">acc</span>;
+}, {});
+<span class="cmt">// O(1) lookup: byId[42] instead of .find()</span>
+
+<span class="cmt">// 4. Flatten nested arrays</span>
+<span class="kw">const</span> <span class="var">flat</span> = <span class="var">nested</span>.<span class="fn">reduce</span>(
+  (<span class="var">acc</span>, <span class="var">arr</span>) => [...<span class="var">acc</span>, ...<span class="var">arr</span>], []
+);</pre>
+        </div>
+
+        <div class="warn-box">
+          <strong>Mutation vs Immutability</strong><br>
+          These are the wrong ways to update React state:<br>
+          <code class="ic">state.push(item)</code> — mutates, same reference, no re-render<br>
+          <code class="ic">state[0].done = true</code> — mutates nested object<br><br>
+          Always return a <strong>new array</strong> from setState: use <code class="ic">.map()</code>, <code class="ic">.filter()</code>, spread, or <code class="ic">.concat()</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DESTRUCTURING ── -->
+  <div class="tab-content" id="js-destructure">
+    <div class="def-block">
+      <div class="def-term">Definition</div>
+      <div class="def-text"><strong>Destructuring</strong> is a concise ES6 syntax that lets you unpack values from arrays or properties from objects into distinct variables in a single statement. <strong>Spread</strong> (<code class="ic">...</code>) copies all remaining or enumerable properties into a new array/object. <strong>Rest</strong> (<code class="ic">...</code> in a parameter position) collects all remaining arguments into an array or object. Together these three patterns appear in virtually every React component.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Object Destructuring</h2>
+        <p class="body">Object destructuring extracts named properties into variables. The variable name must match the property key (or you provide a rename with <code class="ic">:</code>). You can set default values with <code class="ic">=</code>.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">OBJECT DESTRUCTURING PATTERNS</div></div>
+          <pre><span class="cmt">// Basic destructuring from props</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ <span class="var">title</span>, <span class="var">description</span>, <span class="var">onClick</span> }) {
+  <span class="kw">return</span> &lt;<span class="tag">div</span> <span class="attr">onClick</span>={<span class="var">onClick</span>}&gt;{<span class="var">title</span>}&lt;/<span class="tag">div</span>&gt;;
+}
+
+<span class="cmt">// Rename: extract 'name' but call it 'username'</span>
+<span class="kw">const</span> { <span class="var">name</span>: <span class="var">username</span> } = <span class="var">user</span>;
+
+<span class="cmt">// Default value: use 'Guest' if name is undefined</span>
+<span class="kw">const</span> { <span class="var">name</span> = <span class="str">'Guest'</span>, <span class="var">age</span> = <span class="num">0</span> } = <span class="var">user</span>;
+
+<span class="cmt">// Rename + default combined</span>
+<span class="kw">const</span> { <span class="var">name</span>: <span class="var">username</span> = <span class="str">'Guest'</span> } = <span class="var">user</span>;
+
+<span class="cmt">// Nested destructuring</span>
+<span class="kw">const</span> { <span class="var">address</span>: { <span class="var">city</span>, <span class="var">zip</span> } } = <span class="var">user</span>;
+
+<span class="cmt">// In useEffect dependency:</span>
+<span class="kw">const</span> { <span class="var">id</span>, <span class="var">role</span> } = <span class="var">currentUser</span>;
+<span class="hk">useEffect</span>(() => { <span class="fn">fetchData</span>(<span class="var">id</span>); }, [<span class="var">id</span>]);</pre>
+        </div>
+
+        <h2>Array Destructuring</h2>
+        <p class="body">Array destructuring extracts values by position. Variable names are chosen freely. This is exactly how React's <code class="ic">useState</code> hook works — it returns a two-element array <code class="ic">[value, setter]</code>.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">ARRAY DESTRUCTURING</div></div>
+          <pre><span class="cmt">// This IS array destructuring:</span>
+<span class="kw">const</span> [<span class="var">count</span>, <span class="var">setCount</span>] = <span class="hk">useState</span>(<span class="num">0</span>);
+
+<span class="cmt">// Skip elements with commas</span>
+<span class="kw">const</span> [, <span class="var">second</span>, , <span class="var">fourth</span>] = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>];
+
+<span class="cmt">// Swap two variables elegantly</span>
+<span class="kw">let</span> <span class="var">a</span> = <span class="num">1</span>, <span class="var">b</span> = <span class="num">2</span>;
+[<span class="var">a</span>, <span class="var">b</span>] = [<span class="var">b</span>, <span class="var">a</span>]; <span class="cmt">// a=2, b=1</span>
+
+<span class="cmt">// Custom hook pattern returns array</span>
+<span class="kw">function</span> <span class="fn">useToggle</span>(<span class="var">init</span> = <span class="kw">false</span>) {
+  <span class="kw">const</span> [<span class="var">on</span>, <span class="var">setOn</span>] = <span class="hk">useState</span>(<span class="var">init</span>);
+  <span class="kw">return</span> [<span class="var">on</span>, () => <span class="fn">setOn</span>(<span class="var">v</span> => !<span class="var">v</span>)];
+}
+<span class="kw">const</span> [<span class="var">isOpen</span>, <span class="var">toggleOpen</span>] = <span class="fn">useToggle</span>();</pre>
+        </div>
+      </div>
+      <div>
+        <h2>Spread Operator (...)</h2>
+        <p class="body">Spread copies all enumerable own properties of an object (or elements of an array) into a new one. <strong>This is the primary tool for immutable state updates in React</strong>, because it produces a new object/array reference.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">SPREAD FOR IMMUTABLE STATE UPDATES</div></div>
+          <pre><span class="cmt">// Object: copy all, override 'age'</span>
+<span class="fn">setUser</span>(prev => ({ ...prev, <span class="var">age</span>: <span class="num">25</span> }));
+
+<span class="cmt">// Nested object update (must spread each level!)</span>
+<span class="fn">setUser</span>(prev => ({
+  ...prev,
+  <span class="var">address</span>: { ...prev.address, <span class="var">city</span>: <span class="str">'Hyderabad'</span> }
+}));
+
+<span class="cmt">// Array: add item at end</span>
+<span class="fn">setItems</span>(prev => [...prev, newItem]);
+
+<span class="cmt">// Array: add item at beginning</span>
+<span class="fn">setItems</span>(prev => [newItem, ...prev]);
+
+<span class="cmt">// Pass all props + override one</span>
+&lt;<span class="tag">Button</span> {...<span class="var">baseProps</span>} <span class="attr">disabled</span>={<span class="kw">true</span>} /&gt;
+
+<span class="cmt">// Clone an array (same values, new reference)</span>
+<span class="kw">const</span> <span class="var">sorted</span> = [...<span class="var">original</span>].<span class="fn">sort</span>();</pre>
+        </div>
+
+        <h2>Rest Operator (...)</h2>
+        <p class="body">Rest collects everything that wasn't destructured into a new variable. In component props, this is the standard pattern for passing "extra" HTML attributes down to a DOM element.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">REST OPERATOR IN COMPONENTS</div></div>
+          <pre><span class="cmt">// Extract known props, forward the rest</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ <span class="var">label</span>, <span class="var">variant</span> = <span class="str">'primary'</span>, ...<span class="var">htmlProps</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">button</span>
+      <span class="attr">className</span>={<span class="str">`btn btn-${<span class="var">variant</span>}`</span>}
+      {...<span class="var">htmlProps</span>} <span class="cmt">// onClick, disabled, type, etc.</span>
+    &gt;
+      {<span class="var">label</span>}
+    &lt;/<span class="tag">button</span>&gt;
+  );
+}
+
+<span class="cmt">// Rest in function params</span>
+<span class="kw">function</span> <span class="fn">logAll</span>(<span class="var">first</span>, ...<span class="var">rest</span>) {
+  <span class="var">console</span>.<span class="fn">log</span>(<span class="var">first</span>); <span class="cmt">// first arg</span>
+  <span class="var">console</span>.<span class="fn">log</span>(<span class="var">rest</span>);  <span class="cmt">// array of remaining</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ASYNC JS ── -->
+  <div class="tab-content" id="js-async">
+    <div class="def-block">
+      <div class="def-term">Definition</div>
+      <div class="def-text">JavaScript is <strong>single-threaded</strong> but non-blocking. <strong>Asynchronous operations</strong> (network requests, timers, file reads) are offloaded to the browser's Web APIs. When they complete, their callback is placed in the <strong>event queue</strong>. The <strong>event loop</strong> continuously checks if the call stack is empty, and if so, moves the next callback from the queue onto the stack. A <strong>Promise</strong> is an object representing the eventual completion (or failure) of an async operation. <strong>async/await</strong> is syntactic sugar over Promises that makes asynchronous code read like synchronous code.</div>
+    </div>
+
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">JavaScript uses an <strong>event loop</strong> to handle asynchrony without blocking the main thread. A Promise has three states: <strong>pending</strong>, <strong>fulfilled</strong>, or <strong>rejected</strong>. <code class="ic">async/await</code> lets you write async code sequentially. In React, data fetching always lives inside <code class="ic">useEffect</code> (since components are pure render functions that must not produce side effects). You must handle three UI states: <strong>loading</strong>, <strong>data</strong>, and <strong>error</strong>.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Promises — Three States</h2>
+        <div class="lifecycle-flow">
+          <div class="lf-item"><div class="lf-dot"></div><div class="lf-body"><div class="lf-title">pending</div><div class="lf-desc">Initial state. The async operation is still in progress. Neither fulfilled nor rejected yet.</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--green)"></div><div class="lf-body"><div class="lf-title">fulfilled</div><div class="lf-desc">Operation succeeded. The <code class="ic">.then()</code> handler runs with the resolved value.</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--accent2)"></div><div class="lf-body"><div class="lf-title">rejected</div><div class="lf-desc">Operation failed. The <code class="ic">.catch()</code> handler runs (or the catch block in try/catch).</div></div></div>
+        </div>
+
+        <h2>async / await</h2>
+        <p class="body"><code class="ic">async</code> marks a function as asynchronous — it always returns a Promise. <code class="ic">await</code> pauses execution <em>inside that function only</em> (the event loop is not blocked) until the Promise resolves, then resumes with the resolved value. Any rejected promise inside an async function throws and can be caught with try/catch.</p>
+
+        <div class="warn-box">
+          <strong>Critical React Rule:</strong> You cannot make the <code class="ic">useEffect</code> callback itself <code class="ic">async</code> because async functions return a Promise, but React expects the return value to be either undefined or a cleanup function. Always define an inner async function and call it immediately.
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">PRODUCTION-GRADE DATA FETCHING</div></div>
+          <pre><span class="kw">function</span> <span class="fn">useFetch</span>(<span class="var">url</span>) {
+  <span class="kw">const</span> [<span class="var">state</span>, <span class="var">setState</span>] = <span class="hk">useState</span>({
+    <span class="var">data</span>:    <span class="kw">null</span>,
+    <span class="var">loading</span>: <span class="kw">true</span>,
+    <span class="var">error</span>:   <span class="kw">null</span>,
+  });
+
+  <span class="hk">useEffect</span>(() => {
+    <span class="cmt">// Reset state when URL changes</span>
+    <span class="fn">setState</span>({ <span class="var">data</span>: <span class="kw">null</span>, <span class="var">loading</span>: <span class="kw">true</span>, <span class="var">error</span>: <span class="kw">null</span> });
+
+    <span class="cmt">// AbortController cancels in-flight request</span>
+    <span class="kw">const</span> <span class="var">ctrl</span> = <span class="kw">new</span> <span class="fn">AbortController</span>();
+
+    <span class="cmt">// Inner async function (can't make outer async)</span>
+    (<span class="kw">async</span> () => {
+      <span class="kw">try</span> {
+        <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="var">url</span>, { <span class="var">signal</span>: <span class="var">ctrl</span>.signal });
+
+        <span class="cmt">// Always check HTTP status</span>
+        <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP ${<span class="var">res</span>.status}`</span>);
+
+        <span class="kw">const</span> <span class="var">data</span> = <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+        <span class="fn">setState</span>({ <span class="var">data</span>, <span class="var">loading</span>: <span class="kw">false</span>, <span class="var">error</span>: <span class="kw">null</span> });
+      } <span class="kw">catch</span> (<span class="var">err</span>) {
+        <span class="cmt">// Ignore AbortError — it's intentional</span>
+        <span class="kw">if</span> (<span class="var">err</span>.name !== <span class="str">'AbortError'</span>) {
+          <span class="fn">setState</span>({ <span class="var">data</span>: <span class="kw">null</span>, <span class="var">loading</span>: <span class="kw">false</span>, <span class="var">error</span>: <span class="var">err</span> });
+        }
+      }
+    })();
+
+    <span class="cmt">// Cleanup: abort if component unmounts</span>
+    <span class="kw">return</span> () => <span class="var">ctrl</span>.<span class="fn">abort</span>();
+  }, [<span class="var">url</span>]);
+
+  <span class="kw">return</span> <span class="var">state</span>;
+}
+
+<span class="cmt">// Usage</span>
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ <span class="var">id</span> }) {
+  <span class="kw">const</span> { <span class="var">data</span>, <span class="var">loading</span>, <span class="var">error</span> } = <span class="fn">useFetch</span>(<span class="str">`/api/users/${<span class="var">id</span>}`</span>);
+  <span class="kw">if</span> (<span class="var">loading</span>) <span class="kw">return</span> &lt;<span class="tag">Spinner</span> /&gt;;
+  <span class="kw">if</span> (<span class="var">error</span>)   <span class="kw">return</span> &lt;<span class="tag">Error</span> <span class="attr">msg</span>={<span class="var">error</span>.message} /&gt;;
+  <span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;{<span class="var">data</span>.name}&lt;/<span class="tag">h1</span>&gt;;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCOPE & HOISTING ── -->
+  <div class="tab-content" id="js-scope">
+    <div class="def-block">
+      <div class="def-term">Definition — Scope</div>
+      <div class="def-text"><strong>Scope</strong> determines where a variable is accessible. JavaScript has three scope types: <strong>Global</strong> (accessible everywhere), <strong>Function</strong> (accessible only inside a function — created by <code class="ic">var</code>), and <strong>Block</strong> (accessible only inside <code class="ic">{}</code> — created by <code class="ic">let</code> and <code class="ic">const</code>). Scopes nest: an inner scope can access outer scope variables but not vice versa. This nesting is what makes closures possible.</div>
+    </div>
+
+    <div class="def-block">
+      <div class="def-term">Definition — Hoisting</div>
+      <div class="def-text"><strong>Hoisting</strong> is JavaScript's behaviour of moving declarations to the top of their scope during the compilation phase — <em>before</em> code executes. <code class="ic">var</code> declarations are hoisted and initialized to <code class="ic">undefined</code>. <code class="ic">function</code> declarations are hoisted entirely (including their body). <code class="ic">let</code> and <code class="ic">const</code> are hoisted to the top of their block but <strong>not initialized</strong> — accessing them before declaration throws a <code class="ic">ReferenceError</code> (this zone is called the Temporal Dead Zone).</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>var vs let vs const</h2>
+        <table class="compare-table">
+          <thead><tr><th>Aspect</th><th>var</th><th>let</th><th>const</th></tr></thead>
+          <tbody>
+            <tr><td>Scope</td><td>Function</td><td>Block</td><td>Block</td></tr>
+            <tr><td>Hoisting</td><td>Yes, as undefined</td><td>Yes, TDZ (error)</td><td>Yes, TDZ (error)</td></tr>
+            <tr><td>Re-declare same scope</td><td>Yes</td><td>No</td><td>No</td></tr>
+            <tr><td>Re-assign</td><td>Yes</td><td>Yes</td><td>No (binding only)</td></tr>
+            <tr><td>React use</td><td>Avoid</td><td>Mutable values</td><td>Default choice</td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box"><strong>Common Trap — const ≠ immutable:</strong> <code class="ic">const</code> prevents reassignment of the <em>variable binding</em>, not mutation of the value. You cannot do <code class="ic">const x = 1; x = 2</code> but you can do <code class="ic">const obj = {}; obj.name = 'Alice'</code>. This is why React state still needs explicit setState calls even when declared with const.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">SCOPE & HOISTING EXAMPLES</div></div>
+          <pre><span class="cmt">// Hoisting — var</span>
+<span class="var">console</span>.<span class="fn">log</span>(<span class="var">x</span>); <span class="cmt">// undefined (hoisted)</span>
+<span class="kw">var</span> <span class="var">x</span> = <span class="num">5</span>;
+
+<span class="cmt">// TDZ — let/const</span>
+<span class="var">console</span>.<span class="fn">log</span>(<span class="var">y</span>); <span class="cmt">// ReferenceError!</span>
+<span class="kw">let</span> <span class="var">y</span> = <span class="num">5</span>;
+
+<span class="cmt">// Block scope</span>
+<span class="kw">if</span> (<span class="kw">true</span>) {
+  <span class="kw">let</span> <span class="var">blockVar</span> = <span class="str">'inside'</span>;
+  <span class="kw">var</span> <span class="var">funcVar</span>  = <span class="str">'leaks!'</span>;
+}
+<span class="cmt">// console.log(blockVar); // ReferenceError</span>
+<span class="var">console</span>.<span class="fn">log</span>(<span class="var">funcVar</span>); <span class="cmt">// 'leaks!' — var escapes block</span>
+
+<span class="cmt">// Classic closure-in-loop bug (var)</span>
+<span class="kw">for</span> (<span class="kw">var</span> <span class="var">i</span> = <span class="num">0</span>; <span class="var">i</span> < <span class="num">3</span>; <span class="var">i</span>++) {
+  <span class="fn">setTimeout</span>(() => <span class="var">console</span>.<span class="fn">log</span>(<span class="var">i</span>), <span class="num">100</span>);
+  <span class="cmt">// Prints 3, 3, 3 — var is function-scoped</span>
+}
+
+<span class="cmt">// Fix: use let (block scope per iteration)</span>
+<span class="kw">for</span> (<span class="kw">let</span> <span class="var">i</span> = <span class="num">0</span>; <span class="var">i</span> < <span class="num">3</span>; <span class="var">i</span>++) {
+  <span class="fn">setTimeout</span>(() => <span class="var">console</span>.<span class="fn">log</span>(<span class="var">i</span>), <span class="num">100</span>);
+  <span class="cmt">// Prints 0, 1, 2 ✓</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROTOTYPE & this ── -->
+  <div class="tab-content" id="js-proto">
+    <div class="def-block">
+      <div class="def-term">Definition — Prototype Chain</div>
+      <div class="def-text">Every JavaScript object has an internal <code class="ic">[[Prototype]]</code> link to another object (its prototype). When you access a property on an object and it's not found there, JavaScript automatically walks up the prototype chain until it finds it or reaches <code class="ic">null</code>. This is how method inheritance works: array methods like <code class="ic">.map()</code> live on <code class="ic">Array.prototype</code>, not on each individual array.</div>
+    </div>
+    <div class="def-block">
+      <div class="def-term">Definition — this</div>
+      <div class="def-text"><code class="ic">this</code> refers to the <strong>execution context</strong> — the object that a function is called on. Its value is determined at <em>call time</em>, not at definition time (for regular functions). Arrow functions are the exception: they inherit <code class="ic">this</code> from their <strong>lexical</strong> (surrounding) scope at definition time and never have their own <code class="ic">this</code>. This is why React event handlers are almost always arrow functions.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>this — 4 Binding Rules</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Default binding</div><div class="step-text">Regular function call: <code class="ic">this</code> is <code class="ic">window</code> (or <code class="ic">undefined</code> in strict mode).</div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Implicit binding</div><div class="step-text">Method call — <code class="ic">obj.method()</code>: <code class="ic">this</code> is the object before the dot.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Explicit binding</div><div class="step-text"><code class="ic">.call(ctx)</code>, <code class="ic">.apply(ctx)</code>, <code class="ic">.bind(ctx)</code>: manually set <code class="ic">this</code>.</div></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Arrow function</div><div class="step-text">No own <code class="ic">this</code> — inherits from enclosing lexical scope. Cannot be re-bound.</div></div></div>
+        </div>
+        <div class="tip-box"><strong>React relevance:</strong> In class components, methods lose <code class="ic">this</code> when passed as event handlers — you must either <code class="ic">.bind(this)</code> in the constructor or use arrow function class fields. Function components with hooks avoid this problem entirely.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">this BINDING EXAMPLES</div></div>
+          <pre><span class="kw">const</span> <span class="var">obj</span> = {
+  <span class="var">name</span>: <span class="str">'Alice'</span>,
+  <span class="fn">greetRegular</span>: <span class="kw">function</span>() {
+    <span class="kw">return</span> <span class="str">`Hello ${<span class="kw">this</span>.name}`</span>; <span class="cmt">// 'this' = obj</span>
+  },
+  <span class="fn">greetArrow</span>: () => {
+    <span class="kw">return</span> <span class="str">`Hello ${<span class="kw">this</span>.name}`</span>; <span class="cmt">// 'this' = outer (window)</span>
+  },
+};
+
+<span class="var">obj</span>.<span class="fn">greetRegular</span>(); <span class="cmt">// 'Hello Alice' ✓</span>
+<span class="var">obj</span>.<span class="fn">greetArrow</span>();   <span class="cmt">// 'Hello undefined' ✗</span>
+
+<span class="cmt">// Class component — this problem</span>
+<span class="kw">class</span> <span class="fn">Toggle</span> <span class="kw">extends</span> <span class="var">React</span>.<span class="var">Component</span> {
+  <span class="fn">constructor</span>(<span class="var">props</span>) {
+    <span class="kw">super</span>(<span class="var">props</span>);
+    <span class="kw">this</span>.state = { <span class="var">on</span>: <span class="kw">false</span> };
+    <span class="cmt">// Must bind, or 'this' is undefined in handler</span>
+    <span class="kw">this</span>.handleClick = <span class="kw">this</span>.handleClick.<span class="fn">bind</span>(<span class="kw">this</span>);
+  }
+  <span class="fn">handleClick</span>() {
+    <span class="kw">this</span>.<span class="fn">setState</span>(<span class="var">s</span> => ({ <span class="var">on</span>: !<span class="var">s</span>.on }));
+  }
+}
+<span class="cmt">// Function components have NO 'this' issues</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2 — CORE REACT
+═══════════════════════════════════════════════ -->
+<div class="section" id="core">
+  <div class="section-header">
+    <div class="section-label">Section 02</div>
+    <div class="section-title">Core React Concepts<br>Theory & Architecture</div>
+    <p class="section-desc">Deep conceptual questions are asked at every level. Know the "why" not just the "how".</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('core','vdom',this)">Virtual DOM</button>
+    <button class="tab-btn" onclick="showTab('core','stateprops',this)">State vs Props</button>
+    <button class="tab-btn" onclick="showTab('core','lifecycle',this)">Rendering & Lifecycle</button>
+    <button class="tab-btn" onclick="showTab('core','controlled',this)">Controlled vs Uncontrolled</button>
+    <button class="tab-btn" onclick="showTab('core','jsx',this)">JSX & Components</button>
+  </div>
+
+  <!-- VIRTUAL DOM -->
+  <div class="tab-content active" id="core-vdom">
+    <div class="def-block">
+      <div class="def-term">Definition — Virtual DOM</div>
+      <div class="def-text">The <strong>Virtual DOM (VDOM)</strong> is a lightweight, in-memory JavaScript representation of the real browser DOM. It is a plain JavaScript object tree that mirrors the structure and properties of actual DOM nodes — but lives in JS memory, not in the browser. React maintains two virtual trees at any time: the <strong>current</strong> tree (what's on screen) and the <strong>work-in-progress</strong> tree (what the next render should produce).</div>
+    </div>
+    <div class="def-block">
+      <div class="def-term">Definition — Reconciliation</div>
+      <div class="def-text"><strong>Reconciliation</strong> is the algorithm React uses to determine the <em>minimal set of DOM operations</em> needed to bring the real DOM in sync with the latest Virtual DOM. When state changes, React re-renders the component to produce a new VDOM tree, then <strong>diffs</strong> it against the previous one. This diff produces a list of "patches" (insertions, deletions, updates) that React then applies to the real DOM in a single efficient batch — the <strong>commit phase</strong>.</div>
+    </div>
+
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">The Virtual DOM exists because <strong>direct DOM manipulation is expensive</strong> — reading layout properties, inserting nodes, and re-painting all trigger browser reflows. React keeps a lightweight JS copy of the DOM. When state changes, it re-renders to a new virtual tree and uses its diffing algorithm to find only the changed nodes. It then batches those minimal real DOM updates together, reducing browser work. React 18 introduced the Concurrent renderer, which can interrupt, pause, and resume rendering to keep the UI responsive.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>The Diffing Algorithm Rules</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Different element type → full replacement</div><div class="step-text">If a <code class="ic">&lt;div&gt;</code> is replaced by a <code class="ic">&lt;span&gt;</code>, React destroys the entire subtree and mounts a fresh one. All child state is lost.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Same element type → update props only</div><div class="step-text">If the element type stays the same (e.g. still a <code class="ic">&lt;div&gt;</code>), React only updates the changed attributes/props. The DOM node itself is reused.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Lists use keys for identity</div><div class="step-text">Without <code class="ic">key</code>, React assumes list items at the same index are the same node. With <code class="ic">key</code>, React can correctly match, move, insert, or delete items even when order changes.</div></div></div>
+        </div>
+
+        <div class="warn-box">
+          <strong>Never use array index as key in dynamic lists!</strong><br>
+          If you add/remove items or reorder them, index keys cause React to associate wrong state with wrong components — leading to bugs like input values appearing in the wrong fields. Always use a stable, unique ID from your data.
+        </div>
+
+        <div class="memory-aid">
+          <div class="ma-label">Memory Aid</div>
+          <div class="ma-text">Think of reconciliation like a <strong>smart version control diff</strong>. Instead of replacing the entire file, git computes the minimal set of line changes. React does the same for the DOM tree: minimal patches, maximum reuse.</div>
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">KEY PROP — CORRECT vs WRONG</div></div>
+          <pre><span class="cmt">// ❌ WRONG: index as key</span>
+{<span class="var">items</span>.<span class="fn">map</span>((<span class="var">item</span>, <span class="var">index</span>) => (
+  &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">index</span>}&gt;
+    &lt;<span class="tag">input</span> <span class="attr">defaultValue</span>={<span class="var">item</span>.name} /&gt;
+  &lt;/<span class="tag">li</span>&gt;
+))}
+<span class="cmt">// Insert at top → index 0 reassigned → wrong input
+// values appear in wrong fields!</span>
+
+<span class="cmt">// ✅ CORRECT: stable unique id</span>
+{<span class="var">items</span>.<span class="fn">map</span>(<span class="var">item</span> => (
+  &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">item</span>.id}&gt;
+    &lt;<span class="tag">input</span> <span class="attr">defaultValue</span>={<span class="var">item</span>.name} /&gt;
+  &lt;/<span class="tag">li</span>&gt;
+))}
+<span class="cmt">// React tracks each item by ID — always correct</span>
+
+<span class="cmt">// ✅ ALSO OK: key to force full remount</span>
+<span class="cmt">// Changing key destroys+recreates the component</span>
+<span class="cmt">// Useful for resetting form state on user change:</span>
+&lt;<span class="tag">UserProfile</span> <span class="attr">key</span>={<span class="var">userId</span>} <span class="attr">id</span>={<span class="var">userId</span>} /&gt;</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">RENDER PHASES</div></div>
+          <pre><span class="cmt">// RENDER PHASE (pure, can be interrupted in React 18)
+// 1. Component function runs
+// 2. Returns new VDOM tree
+// 3. React diffs with previous VDOM
+
+// COMMIT PHASE (sync, not interruptible)
+// 4. DOM mutations applied
+// 5. useLayoutEffect runs
+// 6. Browser paints screen
+// 7. useEffect runs (async, after paint)</span>
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [<span class="var">n</span>, <span class="var">setN</span>] = <span class="hk">useState</span>(<span class="num">0</span>);
+
+  <span class="cmt">// This runs in render phase — must be pure!</span>
+  <span class="kw">const</span> <span class="var">double</span> = <span class="var">n</span> * <span class="num">2</span>; <span class="cmt">// ✓ pure computation</span>
+
+  <span class="cmt">// Side effects go in useEffect (commit phase)</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="var">document</span>.title = <span class="str">`Count: ${<span class="var">n</span>}`</span>; <span class="cmt">// ✓ side effect</span>
+  }, [<span class="var">n</span>]);
+
+  <span class="kw">return</span> &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() => <span class="fn">setN</span>(<span class="var">n</span>+<span class="num">1</span>)}&gt;{<span class="var">double</span>}&lt;/<span class="tag">button</span>&gt;;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE vs PROPS -->
+  <div class="tab-content" id="core-stateprops">
+    <div class="def-block">
+      <div class="def-term">Definition — State</div>
+      <div class="def-text"><strong>State</strong> is a component's private, mutable data. It is <em>owned</em> by the component and managed via <code class="ic">useState</code> or <code class="ic">useReducer</code>. State is <strong>local</strong> — other components cannot directly read or write it. When state changes (via a setter), React schedules a re-render of that component and all of its descendants. State persists between renders of the same component instance but is reset when the component unmounts.</div>
+    </div>
+    <div class="def-block">
+      <div class="def-term">Definition — Props</div>
+      <div class="def-text"><strong>Props</strong> (short for properties) are the mechanism by which a <strong>parent passes data and callbacks to a child</strong>. Props are <em>read-only</em> inside the child — a child must never mutate its props. They flow strictly downward (parent → child). When a parent re-renders with new prop values, the child receives them and re-renders too. Props can be any JavaScript value: strings, numbers, objects, arrays, or functions (callbacks).</div>
+    </div>
+
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">State is <strong>internal, mutable, owned</strong> by the component — like a component's private memory. Props are <strong>external, immutable, inherited</strong> from the parent — like function arguments. The key design principle is <strong>unidirectional data flow</strong>: data flows down via props, and events flow up via callback props. A child wanting to change shared data calls a callback prop which triggers a state update in the parent, which flows new props back down.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Lifting State Up</h2>
+        <p class="body">When two sibling components need to share state, move the state up to their <strong>closest common ancestor</strong>. The ancestor owns the state, passes the data down as props to both children, and passes setter callbacks down so children can request changes.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">LIFTING STATE UP</div></div>
+          <pre><span class="cmt">// ❌ Wrong: two separate local states get out of sync</span>
+<span class="kw">function</span> <span class="fn">Filter</span>() { <span class="kw">const</span> [<span class="var">q</span>,<span class="var">setQ</span>] = <span class="hk">useState</span>(<span class="str">''</span>); }
+<span class="kw">function</span> <span class="fn">Results</span>() { <span class="kw">const</span> [<span class="var">q</span>,<span class="var">setQ</span>] = <span class="hk">useState</span>(<span class="str">''</span>); }
+
+<span class="cmt">// ✅ Correct: state lifted to parent, shared via props</span>
+<span class="kw">function</span> <span class="fn">SearchPage</span>() {
+  <span class="kw">const</span> [<span class="var">query</span>, <span class="var">setQuery</span>] = <span class="hk">useState</span>(<span class="str">''</span>); <span class="cmt">// lifted here</span>
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tag">Filter</span> <span class="attr">query</span>={<span class="var">query</span>} <span class="attr">onSearch</span>={<span class="var">setQuery</span>} /&gt;
+      &lt;<span class="tag">Results</span> <span class="attr">query</span>={<span class="var">query</span>} /&gt;
+    &lt;/&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="fn">Filter</span>({ <span class="var">query</span>, <span class="var">onSearch</span> }) {
+  <span class="kw">return</span> &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">query</span>}
+                 <span class="attr">onChange</span>={<span class="var">e</span> => <span class="fn">onSearch</span>(<span class="var">e</span>.target.value)} /&gt;;
+}
+
+<span class="kw">function</span> <span class="fn">Results</span>({ <span class="var">query</span> }) {
+  <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;Showing results for: {<span class="var">query</span>}&lt;/<span class="tag">p</span>&gt;;
+}</pre>
+        </div>
+      </div>
+      <div>
+        <h2>State vs Props — Quick Reference</h2>
+        <table class="compare-table">
+          <thead><tr><th>Aspect</th><th>State</th><th>Props</th></tr></thead>
+          <tbody>
+            <tr><td>Who owns it?</td><td>The component itself</td><td>Parent component</td></tr>
+            <tr><td>Mutable?</td><td>Yes — via setState only</td><td>No — read-only in child</td></tr>
+            <tr><td>Re-renders?</td><td>Yes — calling setter triggers render</td><td>Yes — when parent re-renders with new values</td></tr>
+            <tr><td>Initial value</td><td>Passed to useState(init)</td><td>Passed from parent JSX</td></tr>
+            <tr><td>Access in child?</td><td>Direct (it's local)</td><td>Via function parameter</td></tr>
+            <tr><td>Typical use</td><td>Form inputs, toggles, fetched data, UI state</td><td>Display data, config, event handlers</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box"><strong>Derived State:</strong> If a value can be <em>computed</em> from existing state or props, don't put it in state — compute it during render. E.g. <code class="ic">const fullName = firstName + ' ' + lastName</code> should not be state; derive it from two state variables.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIFECYCLE -->
+  <div class="tab-content" id="core-lifecycle">
+    <div class="def-block">
+      <div class="def-term">Definition — Component Lifecycle</div>
+      <div class="def-text">Every React component goes through three phases: <strong>Mount</strong> (added to the DOM for the first time), <strong>Update</strong> (re-rendered due to state/prop changes), and <strong>Unmount</strong> (removed from the DOM). In function components, all three phases are handled by <code class="ic">useEffect</code> through its setup function, dependency array, and cleanup return value respectively.</div>
+    </div>
+
+    <div class="def-block">
+      <div class="def-term">Definition — What Triggers a Re-render?</div>
+      <div class="def-text">A React component re-renders when: (1) its own <strong>state changes</strong> via a setter; (2) its <strong>parent re-renders</strong> (and by default passes new prop references even if values are equal); (3) a <strong>Context</strong> it subscribes to changes its value; or (4) <code class="ic">forceUpdate()</code> is called (class components only). A re-render does NOT mean a DOM update — it means React runs the render function to produce a new VDOM, then checks if the DOM needs updating.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Function Component Lifecycle Phases</h2>
+        <div class="lifecycle-flow">
+          <div class="lf-item"><div class="lf-dot"></div><div class="lf-body"><div class="lf-title">MOUNT — Component appears in DOM</div><div class="lf-desc">The component function runs for the first time. All <code class="ic">useEffect</code> hooks with <code class="ic">[]</code> dependency fire once after the first paint. Good for: subscriptions, data fetching, event listener setup.</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--accent4)"></div><div class="lf-body"><div class="lf-title">UPDATE — State or props change</div><div class="lf-desc">Component function runs again with new state/props. <code class="ic">useEffect</code> hooks with matching deps in the array fire. The cleanup from the previous run fires first, then the new setup.</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--accent3)"></div><div class="lf-body"><div class="lf-title">CLEANUP (between updates)</div><div class="lf-desc">Before each re-run of a useEffect (and on unmount), the <strong>cleanup function</strong> (the function returned from the effect) runs. Used to cancel subscriptions, clear timers, abort fetches.</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--accent2)"></div><div class="lf-body"><div class="lf-title">UNMOUNT — Component leaves DOM</div><div class="lf-desc">The cleanup function of every useEffect runs one final time. Component state is destroyed. The next mount will start with fresh initial state.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">LIFECYCLE MAPPED TO useEffect</div></div>
+          <pre><span class="kw">function</span> <span class="fn">ChatRoom</span>({ <span class="var">roomId</span> }) {
+  <span class="kw">const</span> [<span class="var">msgs</span>, <span class="var">setMsgs</span>] = <span class="hk">useState</span>([]);
+
+  <span class="cmt">// MOUNT: empty [] → runs once after first render</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="fn">logAnalytics</span>(<span class="str">'page_view'</span>);
+    <span class="kw">return</span> () => <span class="fn">logAnalytics</span>(<span class="str">'page_leave'</span>); <span class="cmt">// UNMOUNT</span>
+  }, []);
+
+  <span class="cmt">// UPDATE: runs when roomId changes
+  // also runs on first mount</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="var">socket</span> = <span class="fn">connectToRoom</span>(<span class="var">roomId</span>);
+    <span class="var">socket</span>.<span class="fn">on</span>(<span class="str">'message'</span>, <span class="var">msg</span> =>
+      <span class="fn">setMsgs</span>(<span class="var">prev</span> => [...<span class="var">prev</span>, <span class="var">msg</span>])
+    );
+
+    <span class="cmt">// CLEANUP: fires before next roomId change + unmount</span>
+    <span class="kw">return</span> () => <span class="var">socket</span>.<span class="fn">disconnect</span>();
+  }, [<span class="var">roomId</span>]); <span class="cmt">// ← dep</span>
+
+  <span class="cmt">// EVERY render: no deps array</span>
+  <span class="hk">useEffect</span>(() => {
+    <span class="var">document</span>.title = <span class="str">`${<span class="var">msgs</span>.length} messages`</span>;
+  });
+
+  <span class="kw">return</span> &lt;<span class="tag">ul</span>&gt;{<span class="var">msgs</span>.<span class="fn">map</span>(<span class="var">m</span> => &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">m</span>.id}&gt;{<span class="var">m</span>.text}&lt;/<span class="tag">li</span>&gt;)}&lt;/<span class="tag">ul</span>&gt;;
+}</pre>
+        </div>
+        <div class="warn-box"><strong>Avoid missing dependencies!</strong> Eslint's <code class="ic">exhaustive-deps</code> rule catches missing deps. A missing dep usually causes a stale closure bug.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLLED vs UNCONTROLLED -->
+  <div class="tab-content" id="core-controlled">
+    <div class="def-block">
+      <div class="def-term">Definition — Controlled Component</div>
+      <div class="def-text">A <strong>controlled component</strong> is a form element whose value is entirely driven by React state. The component's <code class="ic">value</code> prop is set to a state variable, and an <code class="ic">onChange</code> handler updates that state on every keystroke. React state is the <strong>single source of truth</strong> — the DOM input value always reflects what's in state. This gives you complete, instant control over the input value at all times.</div>
+    </div>
+    <div class="def-block">
+      <div class="def-term">Definition — Uncontrolled Component</div>
+      <div class="def-text">An <strong>uncontrolled component</strong> lets the DOM itself be the source of truth for form input values. Instead of syncing state on every keystroke, you attach a <code class="ic">ref</code> and read <code class="ic">ref.current.value</code> only when needed (e.g. on form submit). The DOM manages the value internally. This is closer to how vanilla HTML forms work.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Controlled — When to Use</h2>
+        <ul>
+          <li><strong>Instant validation</strong> — show errors as user types</li>
+          <li><strong>Conditional UI</strong> — show/hide other fields based on value</li>
+          <li><strong>Format on input</strong> — phone number masking, slug generation</li>
+          <li><strong>Disable submit button</strong> until all fields are valid</li>
+          <li><strong>Programmatic value reset</strong> — clear form on cancel</li>
+        </ul>
+        <h2>Uncontrolled — When to Use</h2>
+        <ul>
+          <li><strong>File inputs</strong> — <code class="ic">&lt;input type="file"&gt;</code> can only be uncontrolled</li>
+          <li><strong>Third-party DOM lib</strong> integration (e.g. rich text editors)</li>
+          <li><strong>Simple forms</strong> where you only need the value on submit</li>
+          <li><strong>Performance</strong> — avoid re-renders on every keystroke</li>
+        </ul>
+        <div class="tip-box"><strong>React Hook Form</strong> uses an uncontrolled approach internally for performance, then validates on submit — giving you the best of both worlds.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">CONTROLLED vs UNCONTROLLED</div></div>
+          <pre><span class="cmt">// ═══ CONTROLLED ═══</span>
+<span class="kw">function</span> <span class="fn">ControlledForm</span>() {
+  <span class="kw">const</span> [<span class="var">email</span>, <span class="var">setEmail</span>] = <span class="hk">useState</span>(<span class="str">''</span>);
+  <span class="kw">const</span> [<span class="var">error</span>, <span class="var">setError</span>] = <span class="hk">useState</span>(<span class="str">''</span>);
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (<span class="var">e</span>) => {
+    <span class="kw">const</span> <span class="var">val</span> = <span class="var">e</span>.target.value;
+    <span class="fn">setEmail</span>(<span class="var">val</span>);
+    <span class="cmt">// Instant validation — possible only with controlled</span>
+    <span class="fn">setError</span>(<span class="var">val</span>.<span class="fn">includes</span>(<span class="str">'@'</span>) ? <span class="str">''</span> : <span class="str">'Invalid email'</span>);
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">email</span>} <span class="attr">onChange</span>={<span class="var">handleChange</span>} /&gt;
+      {<span class="var">error</span> && &lt;<span class="tag">span</span> <span class="attr">style</span>={{<span class="var">color</span>:<span class="str">'red'</span>}}&gt;{<span class="var">error</span>}&lt;/<span class="tag">span</span>&gt;}
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}
+
+<span class="cmt">// ═══ UNCONTROLLED ═══</span>
+<span class="kw">function</span> <span class="fn">UncontrolledForm</span>() {
+  <span class="kw">const</span> <span class="var">emailRef</span> = <span class="hk">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> <span class="var">fileRef</span>  = <span class="hk">useRef</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (<span class="var">e</span>) => {
+    <span class="var">e</span>.<span class="fn">preventDefault</span>();
+    <span class="kw">const</span> <span class="var">email</span> = <span class="var">emailRef</span>.current.value;
+    <span class="kw">const</span> <span class="var">file</span>  = <span class="var">fileRef</span>.current.files[<span class="num">0</span>];
+    <span class="fn">uploadFile</span>(<span class="var">email</span>, <span class="var">file</span>);
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">form</span> <span class="attr">onSubmit</span>={<span class="var">handleSubmit</span>}&gt;
+      &lt;<span class="tag">input</span> <span class="attr">ref</span>={<span class="var">emailRef</span>} <span class="attr">type</span>=<span class="str">"email"</span> /&gt;
+      &lt;<span class="tag">input</span> <span class="attr">ref</span>={<span class="var">fileRef</span>}  <span class="attr">type</span>=<span class="str">"file"</span> /&gt;
+      &lt;<span class="tag">button</span>&gt;Submit&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">form</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSX -->
+  <div class="tab-content" id="core-jsx">
+    <div class="def-block">
+      <div class="def-term">Definition — JSX</div>
+      <div class="def-text"><strong>JSX</strong> (JavaScript XML) is a syntax extension for JavaScript that looks like HTML but compiles to regular JavaScript function calls. <code class="ic">&lt;MyComponent prop="value" /&gt;</code> compiles to <code class="ic">React.createElement(MyComponent, { prop: "value" })</code>. JSX is not a template language — it is just syntactic sugar over function calls that produce React element objects. Babel or the TypeScript compiler transforms JSX before the code runs in the browser.</div>
+    </div>
+
+    <div class="def-block">
+      <div class="def-term">Definition — Component Types</div>
+      <div class="def-text">React has two types of components: <strong>Function Components</strong> — plain JavaScript functions that accept props and return JSX. They use hooks for state and side effects. <strong>Class Components</strong> — ES6 classes extending <code class="ic">React.Component</code> with a required <code class="ic">render()</code> method. They have lifecycle methods (<code class="ic">componentDidMount</code>, <code class="ic">componentDidUpdate</code>, etc.) but no hooks. The React team now strongly recommends function components with hooks for all new code.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>JSX Rules to Know</h2>
+        <ul>
+          <li>Must return a <strong>single root element</strong> (use <code class="ic">&lt;Fragment&gt;</code> or <code class="ic">&lt;&gt;&lt;/&gt;</code> to group without adding a DOM node)</li>
+          <li>All tags must be <strong>closed</strong>: <code class="ic">&lt;br /&gt;</code> not <code class="ic">&lt;br&gt;</code></li>
+          <li>Use <code class="ic">className</code> instead of <code class="ic">class</code>, <code class="ic">htmlFor</code> instead of <code class="ic">for</code></li>
+          <li>JavaScript expressions go inside <code class="ic">{}</code></li>
+          <li><strong>Component names must be capitalized</strong> — lowercase is treated as a DOM element</li>
+          <li>Style prop takes an <strong>object</strong>: <code class="ic">style={{ color: 'red' }}</code></li>
+          <li>Event handlers use <strong>camelCase</strong>: <code class="ic">onClick</code>, <code class="ic">onChange</code></li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">JSX UNDER THE HOOD</div></div>
+          <pre><span class="cmt">// JSX you write:</span>
+<span class="kw">const</span> <span class="var">element</span> = (
+  &lt;<span class="tag">button</span> <span class="attr">className</span>=<span class="str">"btn"</span> <span class="attr">onClick</span>={<span class="var">handleClick</span>}&gt;
+    Click me
+  &lt;/<span class="tag">button</span>&gt;
+);
+
+<span class="cmt">// What Babel compiles it to:</span>
+<span class="kw">const</span> <span class="var">element</span> = <span class="var">React</span>.<span class="fn">createElement</span>(
+  <span class="str">'button'</span>,
+  { <span class="var">className</span>: <span class="str">'btn'</span>, <span class="var">onClick</span>: <span class="var">handleClick</span> },
+  <span class="str">'Click me'</span>
+);
+
+<span class="cmt">// React element object produced:</span>
+{
+  <span class="var">type</span>: <span class="str">'button'</span>,
+  <span class="var">props</span>: { <span class="var">className</span>: <span class="str">'btn'</span>, <span class="var">onClick</span>: <span class="var">handleClick</span>,
+           <span class="var">children</span>: <span class="str">'Click me'</span> },
+  <span class="var">key</span>: <span class="kw">null</span>,
+  <span class="var">ref</span>: <span class="kw">null</span>
+}
+<span class="cmt">// This is just a plain JS object — lightweight,
+// not a real DOM node. React uses it to build
+// and diff the Virtual DOM.</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3 — HOOKS
+═══════════════════════════════════════════════ -->
+<div class="section" id="hooks">
+  <div class="section-header">
+    <div class="section-label">Section 03</div>
+    <div class="section-title">Hooks Mastery</div>
+    <p class="section-desc">The most tested React topic. Know every hook's definition, purpose, timing, and common pitfalls.</p>
+  </div>
+
+  <div class="warn-box" style="margin-bottom:28px">
+    <strong>The 2 Rules of Hooks (memorize these):</strong><br>
+    1. <strong>Only call hooks at the top level</strong> — never inside loops, conditions, or nested functions. React tracks hooks by their call order; breaking the order corrupts the internal hook linked-list.<br>
+    2. <strong>Only call hooks inside React function components or custom hooks</strong> — not in class components, regular utility functions, or event handlers.
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('hooks','usestate',this)">useState</button>
+    <button class="tab-btn" onclick="showTab('hooks','usereducer',this)">useReducer</button>
+    <button class="tab-btn" onclick="showTab('hooks','useeffect',this)">useEffect</button>
+    <button class="tab-btn" onclick="showTab('hooks','uselayout',this)">useLayoutEffect</button>
+    <button class="tab-btn" onclick="showTab('hooks','useref',this)">useRef</button>
+    <button class="tab-btn" onclick="showTab('hooks','usecontext',this)">useContext</button>
+    <button class="tab-btn" onclick="showTab('hooks','custom',this)">Custom Hooks</button>
+  </div>
+
+  <!-- useState -->
+  <div class="tab-content active" id="hooks-usestate">
+    <div class="def-block">
+      <div class="def-term">Definition — useState</div>
+      <div class="def-text"><code class="ic">useState(initialValue)</code> declares a <strong>state variable</strong> inside a function component. It returns a tuple: <code class="ic">[currentValue, setterFunction]</code>. The setter triggers a re-render with the new value. React ensures that within a single event (like a click), multiple setState calls are <strong>batched</strong> into a single re-render (React 18 batches all updates, including those in async callbacks). The initial value is only used on the <em>first</em> render; all subsequent renders use the stored state.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>How useState Works Internally</h2>
+        <p class="body">React maintains an ordered list of "state cells" per component instance. Each <code class="ic">useState</code> call occupies a cell by its position in the call order. This is why hooks must always be called in the same order — so React can match each hook call to its corresponding cell.</p>
+
+        <h3 class="sub">Functional Updater Form</h3>
+        <p class="body">When the new state depends on the previous state, always use the functional updater <code class="ic">setState(prev => newValue)</code>. This guarantees you're working from the most recent state, not a potentially stale closure value.</p>
+
+        <h3 class="sub">Lazy Initialization</h3>
+        <p class="body">If the initial state is expensive to compute (e.g. parsing localStorage), pass a <strong>function</strong> to useState. React calls it only on the first render, not on every re-render.</p>
+
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useState — ALL PATTERNS</div></div>
+          <pre><span class="cmt">// Basic</span>
+<span class="kw">const</span> [<span class="var">count</span>, <span class="var">setCount</span>] = <span class="hk">useState</span>(<span class="num">0</span>);
+
+<span class="cmt">// Object state — always spread to update immutably</span>
+<span class="kw">const</span> [<span class="var">user</span>, <span class="var">setUser</span>] = <span class="hk">useState</span>({ <span class="var">name</span>:<span class="str">''</span>, <span class="var">age</span>:<span class="num">0</span> });
+<span class="fn">setUser</span>(<span class="var">prev</span> => ({ ...prev, <span class="var">name</span>: <span class="str">'Alice'</span> }));
+
+<span class="cmt">// Functional updater — safe with batching/concurrency</span>
+<span class="fn">setCount</span>(<span class="var">prev</span> => <span class="var">prev</span> + <span class="num">1</span>); <span class="cmt">// ✓ always fresh</span>
+
+<span class="cmt">// Lazy initialization — expensive init runs ONCE</span>
+<span class="kw">const</span> [<span class="var">data</span>, <span class="var">setData</span>] = <span class="hk">useState</span>(() => {
+  <span class="kw">const</span> <span class="var">saved</span> = <span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="str">'data'</span>);
+  <span class="kw">return</span> <span class="var">saved</span> ? <span class="fn">JSON</span>.<span class="fn">parse</span>(<span class="var">saved</span>) : [];
+}); <span class="cmt">// function, not the result!</span>
+
+<span class="cmt">// Batching in React 18 — single re-render</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = () => {
+  <span class="fn">setCount</span>(<span class="var">c</span> => <span class="var">c</span> + <span class="num">1</span>);  <span class="cmt">// batched together</span>
+  <span class="fn">setName</span>(<span class="str">'Bob'</span>);        <span class="cmt">// batched together</span>
+  <span class="cmt">// Only ONE re-render happens ✓</span>
+};</pre>
+        </div>
+      </div>
+      <div>
+        <div class="warn-box">
+          <strong>Common useState Mistakes</strong><br>
+          1. <strong>Direct mutation:</strong> <code class="ic">state.push(x)</code> — same reference, no re-render. Always return a new array/object.<br>
+          2. <strong>Reading stale state:</strong> Reading <code class="ic">count</code> right after <code class="ic">setCount(count+1)</code> in the same render still gives the old value. The update is queued, not immediate.<br>
+          3. <strong>Object state missing spread:</strong> <code class="ic">setState({ age: 25 })</code> replaces the entire object. You need <code class="ic">setState(prev => ({...prev, age: 25}))</code>.<br>
+          4. <strong>Unnecessary state:</strong> If a value can be derived from state or props, don't store it as state — compute it during render.
+        </div>
+        <div class="memory-aid">
+          <div class="ma-label">Mental Model</div>
+          <div class="ma-text">Think of <code class="ic">useState</code> as a <strong>sticky note on the wall</strong> for a component. React reads the note, shows the UI, and when you call the setter, it changes what's on the note and re-draws the UI. The note survives re-renders but disappears when the component unmounts.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- useReducer -->
+  <div class="tab-content" id="hooks-usereducer">
+    <div class="def-block">
+      <div class="def-term">Definition — useReducer</div>
+      <div class="def-text"><code class="ic">useReducer(reducer, initialState)</code> is an alternative to <code class="ic">useState</code> for managing <strong>complex state logic</strong>. It takes a <strong>pure reducer function</strong> (<code class="ic">(state, action) =&gt; newState</code>) and an initial state, and returns <code class="ic">[currentState, dispatch]</code>. You update state by dispatching action objects (<code class="ic">dispatch({ type: 'increment' })</code>) rather than calling setters directly. The reducer centralizes all state transition logic in one pure, testable function.</div>
+    </div>
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">Use <code class="ic">useReducer</code> when: (1) state has multiple sub-values that are updated together; (2) the next state depends on the previous in complex ways; (3) state transitions have distinct <em>names</em> (action types) that help describe what happened; or (4) you want the state logic to be independently unit-testable (pure functions are trivial to test). Think of it as a mini-Redux inside a single component. For simple, independent state values, <code class="ic">useState</code> is simpler and sufficient.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>Reducer Pattern Explained</h2>
+        <p class="body">A <strong>reducer</strong> is a pure function: given the current state and an action, it returns the next state. It must not mutate the old state, produce side effects, or depend on anything outside its arguments. This purity makes it predictable and testable in complete isolation from React.</p>
+        <table class="compare-table">
+          <thead><tr><th>Criterion</th><th>useState</th><th>useReducer</th></tr></thead>
+          <tbody>
+            <tr><td>State complexity</td><td>Simple values</td><td>Multiple related fields</td></tr>
+            <tr><td>Update logic</td><td>Inline setters</td><td>Centralized reducer</td></tr>
+            <tr><td>Action names</td><td>None</td><td>Named action types</td></tr>
+            <tr><td>Testability</td><td>N/A</td><td>Pure function — easy to unit test</td></tr>
+            <tr><td>Readability</td><td>Simpler for <3 values</td><td>Clearer for complex transitions</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useREDUCER — SHOPPING CART</div></div>
+          <pre><span class="kw">const</span> <span class="var">initialState</span> = { <span class="var">items</span>: [], <span class="var">total</span>: <span class="num">0</span> };
+
+<span class="kw">function</span> <span class="fn">cartReducer</span>(<span class="var">state</span>, <span class="var">action</span>) {
+  <span class="kw">switch</span> (<span class="var">action</span>.type) {
+
+    <span class="kw">case</span> <span class="str">'ADD_ITEM'</span>: {
+      <span class="kw">const</span> <span class="var">newItems</span> = [...<span class="var">state</span>.items, <span class="var">action</span>.payload];
+      <span class="kw">return</span> { <span class="var">items</span>: <span class="var">newItems</span>,
+               <span class="var">total</span>: <span class="fn">calcTotal</span>(<span class="var">newItems</span>) };
+    }
+
+    <span class="kw">case</span> <span class="str">'REMOVE_ITEM'</span>: {
+      <span class="kw">const</span> <span class="var">newItems</span> = <span class="var">state</span>.items.<span class="fn">filter</span>(
+        <span class="var">i</span> => <span class="var">i</span>.id !== <span class="var">action</span>.payload
+      );
+      <span class="kw">return</span> { <span class="var">items</span>: <span class="var">newItems</span>,
+               <span class="var">total</span>: <span class="fn">calcTotal</span>(<span class="var">newItems</span>) };
+    }
+
+    <span class="kw">case</span> <span class="str">'CLEAR'</span>:
+      <span class="kw">return</span> <span class="var">initialState</span>;
+
+    <span class="kw">default</span>:
+      <span class="kw">return</span> <span class="var">state</span>; <span class="cmt">// always return state for unknowns</span>
+  }
+}
+
+<span class="kw">function</span> <span class="fn">Cart</span>() {
+  <span class="kw">const</span> [<span class="var">cart</span>, <span class="var">dispatch</span>] = <span class="hk">useReducer</span>(<span class="var">cartReducer</span>, <span class="var">initialState</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Total: ${<span class="var">cart</span>.total}&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =>
+        <span class="fn">dispatch</span>({ <span class="var">type</span>: <span class="str">'ADD_ITEM'</span>, <span class="var">payload</span>: <span class="var">newProduct</span> })
+      }&gt;Add&lt;/<span class="tag">button</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =>
+        <span class="fn">dispatch</span>({ <span class="var">type</span>: <span class="str">'CLEAR'</span> })
+      }&gt;Clear Cart&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- useEffect -->
+  <div class="tab-content" id="hooks-useeffect">
+    <div class="def-block">
+      <div class="def-term">Definition — useEffect</div>
+      <div class="def-text"><code class="ic">useEffect(setup, dependencies?)</code> lets you synchronize a component with an <strong>external system</strong> (APIs, subscriptions, timers, browser APIs, third-party libraries). It runs the <code class="ic">setup</code> function <strong>after the browser has painted</strong> (asynchronously, post-commit). The optional <strong>dependency array</strong> controls when it re-runs: an empty array <code class="ic">[]</code> means run once on mount; an array with values means run whenever any of those values change; no array means run after every render. The setup function can return a <strong>cleanup function</strong> that runs before the next setup call and on unmount.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>Dependency Array Rules</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">No array — runs every render</div><div class="step-text">Effect runs after every single render. Rarely what you want — creates performance issues and potential infinite loops.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Empty array [] — mount only</div><div class="step-text">Effect runs once after the first render. Cleanup runs once on unmount. Good for one-time setup.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">[dep1, dep2] — conditional</div><div class="step-text">Effect runs on mount AND whenever any listed dependency changes. React compares deps using <code class="ic">Object.is()</code> (shallow equality).</div></div></div>
+        </div>
+        <div class="warn-box"><strong>Object/function deps cause infinite loops!</strong> If you put an object or function (created inline) in deps, it's a new reference on every render. The effect runs → triggers a re-render → new reference → effect runs again. Fix: use <code class="ic">useMemo</code> / <code class="ic">useCallback</code>, or extract the value outside the component.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useEffect — ALL DEPENDENCY PATTERNS</div></div>
+          <pre><span class="cmt">// ❌ Runs after EVERY render — dangerous</span>
+<span class="hk">useEffect</span>(() => { <span class="fn">doSomething</span>(); });
+
+<span class="cmt">// ✅ Run once: subscribe on mount, unsubscribe on unmount</span>
+<span class="hk">useEffect</span>(() => {
+  <span class="kw">const</span> <span class="var">sub</span> = <span class="var">store</span>.<span class="fn">subscribe</span>(<span class="fn">render</span>);
+  <span class="kw">return</span> () => <span class="var">sub</span>.<span class="fn">unsubscribe</span>(); <span class="cmt">// cleanup</span>
+}, []);
+
+<span class="cmt">// ✅ Re-run when userId changes</span>
+<span class="hk">useEffect</span>(() => {
+  <span class="kw">const</span> <span class="var">ctrl</span> = <span class="kw">new</span> <span class="fn">AbortController</span>();
+  <span class="fn">fetchUser</span>(<span class="var">userId</span>, <span class="var">ctrl</span>.signal).<span class="fn">then</span>(<span class="var">setUser</span>);
+  <span class="kw">return</span> () => <span class="var">ctrl</span>.<span class="fn">abort</span>(); <span class="cmt">// cancel prev request</span>
+}, [<span class="var">userId</span>]);
+
+<span class="cmt">// ⚠️  Object in deps — causes infinite loop!</span>
+<span class="hk">useEffect</span>(() => { <span class="fn">doSomething</span>(<span class="var">config</span>); }, [<span class="var">config</span>]);
+<span class="cmt">// config = { theme: 'dark' } — new obj every render!
+
+// ✅ Fix: depend on the primitive value</span>
+<span class="hk">useEffect</span>(() => { <span class="fn">doSomething</span>(<span class="var">config</span>); }, [<span class="var">config</span>.theme]);
+
+<span class="cmt">// ✅ Fix: memoize the object</span>
+<span class="kw">const</span> <span class="var">stableConfig</span> = <span class="hk">useMemo</span>(() => ({ <span class="var">theme</span> }), [<span class="var">theme</span>]);
+<span class="hk">useEffect</span>(() => { <span class="fn">doSomething</span>(<span class="var">stableConfig</span>); }, [<span class="var">stableConfig</span>]);</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- useLayoutEffect -->
+  <div class="tab-content" id="hooks-uselayout">
+    <div class="def-block">
+      <div class="def-term">Definition — useLayoutEffect</div>
+      <div class="def-text"><code class="ic">useLayoutEffect</code> has the same signature as <code class="ic">useEffect</code> but fires <strong>synchronously after all DOM mutations and before the browser has a chance to paint</strong>. This means any state updates inside it are flushed synchronously and the browser never shows an intermediate visual state — preventing flicker. The trade-off is that it blocks the browser from painting until it completes, so it must be fast.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>useEffect vs useLayoutEffect</h2>
+        <table class="compare-table">
+          <thead><tr><th>Aspect</th><th>useEffect</th><th>useLayoutEffect</th></tr></thead>
+          <tbody>
+            <tr><td>Timing</td><td>After browser paint (async)</td><td>After DOM mutation, before paint (sync)</td></tr>
+            <tr><td>Blocks paint?</td><td>No</td><td>Yes — use carefully</td></tr>
+            <tr><td>Main use</td><td>Data fetching, subscriptions, timers</td><td>DOM measurements, preventing visual flicker</td></tr>
+            <tr><td>SSR?</td><td>Safe</td><td>Logs warnings on server</td></tr>
+            <tr><td>Default choice</td><td>✅ Yes</td><td>Only when useEffect causes flicker</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box"><strong>Decision rule:</strong> Start with <code class="ic">useEffect</code>. If the user sees a visual "flash" or position jump, switch to <code class="ic">useLayoutEffect</code>. That flash is the signal that you need to read the DOM and update state <em>before</em> the browser shows the frame.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useLayoutEffect — TOOLTIP POSITIONING</div></div>
+          <pre><span class="kw">function</span> <span class="fn">Tooltip</span>({ <span class="var">anchor</span>, <span class="var">children</span> }) {
+  <span class="kw">const</span> <span class="var">ref</span> = <span class="hk">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [<span class="var">pos</span>, <span class="var">setPos</span>] = <span class="hk">useState</span>({ <span class="var">top</span>:<span class="num">0</span>, <span class="var">left</span>:<span class="num">0</span> });
+
+  <span class="cmt">// useEffect: tooltip briefly appears at wrong position
+  // useLayoutEffect: position computed before paint → no flicker</span>
+  <span class="hk">useLayoutEffect</span>(() => {
+    <span class="kw">if</span> (!<span class="var">ref</span>.current || !<span class="var">anchor</span>) <span class="kw">return</span>;
+
+    <span class="kw">const</span> <span class="var">anchorRect</span> = <span class="var">anchor</span>.<span class="fn">getBoundingClientRect</span>();
+    <span class="kw">const</span> <span class="var">tipHeight</span>  = <span class="var">ref</span>.current.offsetHeight;
+    <span class="kw">const</span> <span class="var">tipWidth</span>   = <span class="var">ref</span>.current.offsetWidth;
+
+    <span class="fn">setPos</span>({
+      <span class="var">top</span>:  <span class="var">anchorRect</span>.top - <span class="var">tipHeight</span> - <span class="num">8</span>,
+      <span class="var">left</span>: <span class="var">anchorRect</span>.left + (<span class="var">anchorRect</span>.width - <span class="var">tipWidth</span>) / <span class="num">2</span>,
+    });
+  }, [<span class="var">anchor</span>]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>
+      <span class="attr">ref</span>={<span class="var">ref</span>}
+      <span class="attr">style</span>={{ <span class="var">position</span>:<span class="str">'fixed'</span>, <span class="var">top</span>:<span class="var">pos</span>.top, <span class="var">left</span>:<span class="var">pos</span>.left }}
+    &gt;
+      {<span class="var">children</span>}
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- useRef -->
+  <div class="tab-content" id="hooks-useref">
+    <div class="def-block">
+      <div class="def-term">Definition — useRef</div>
+      <div class="def-text"><code class="ic">useRef(initialValue)</code> returns a mutable ref object <code class="ic">{ current: initialValue }</code> that <strong>persists for the full lifetime of the component</strong>. Unlike state, mutating <code class="ic">ref.current</code> does <strong>not</strong> trigger a re-render. <code class="ic">useRef</code> has two distinct use-cases: (1) <strong>accessing DOM nodes</strong> directly by attaching the ref object to a JSX element's <code class="ic">ref</code> prop, and (2) <strong>persisting any mutable value</strong> across renders without causing re-renders — like a component-scoped instance variable.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>Two Distinct Uses of useRef</h2>
+
+        <h3 class="sub">Use 1 — DOM Reference</h3>
+        <p class="body">When you pass a ref to a JSX element's <code class="ic">ref</code> prop, React sets <code class="ic">ref.current</code> to the underlying DOM node after mount and clears it on unmount. This gives you direct imperative access to DOM APIs: <code class="ic">focus()</code>, <code class="ic">blur()</code>, <code class="ic">scrollIntoView()</code>, <code class="ic">getBoundingClientRect()</code>, media controls, canvas context, etc.</p>
+
+        <h3 class="sub">Use 2 — Mutable Instance Variable</h3>
+        <p class="body">Think of it as a <strong>box</strong> that lives alongside the component for its entire lifetime. You can read and write <code class="ic">ref.current</code> freely — it doesn't affect rendering. Common uses: storing a timer ID so it can be cancelled later, storing the previous value of a prop, tracking whether a component is still mounted (to prevent state updates after unmount), or storing a value set during an event that needs to be read by an effect.</p>
+
+        <div class="warn-box">
+          <strong>useRef vs useState:</strong> If you need to show a value in the UI, use <code class="ic">useState</code>. If you need to remember a value between renders but don't need the UI to reflect it, use <code class="ic">useRef</code>. Mutating <code class="ic">ref.current</code> is a side effect — do it inside event handlers or effects, not during rendering.
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useRef — 5 REAL PATTERNS</div></div>
+          <pre><span class="cmt">// 1. Focus a DOM element</span>
+<span class="kw">const</span> <span class="var">inputRef</span> = <span class="hk">useRef</span>(<span class="kw">null</span>);
+<span class="kw">const</span> <span class="fn">focusInput</span> = () => <span class="var">inputRef</span>.current?.<span class="fn">focus</span>();
+&lt;<span class="tag">input</span> <span class="attr">ref</span>={<span class="var">inputRef</span>} /&gt;
+
+<span class="cmt">// 2. Store interval ID without re-render</span>
+<span class="kw">const</span> <span class="var">timerRef</span> = <span class="hk">useRef</span>(<span class="kw">null</span>);
+<span class="kw">const</span> <span class="fn">start</span> = () => { <span class="var">timerRef</span>.current = <span class="fn">setInterval</span>(<span class="var">tick</span>, <span class="num">1000</span>); };
+<span class="kw">const</span> <span class="fn">stop</span>  = () => <span class="fn">clearInterval</span>(<span class="var">timerRef</span>.current);
+
+<span class="cmt">// 3. usePrevious — track previous prop value</span>
+<span class="kw">function</span> <span class="fn">usePrevious</span>(<span class="var">value</span>) {
+  <span class="kw">const</span> <span class="var">prevRef</span> = <span class="hk">useRef</span>();
+  <span class="hk">useEffect</span>(() => { <span class="var">prevRef</span>.current = <span class="var">value</span>; }); <span class="cmt">// runs after render</span>
+  <span class="kw">return</span> <span class="var">prevRef</span>.current; <span class="cmt">// returns PREVIOUS render's value</span>
+}
+
+<span class="cmt">// 4. isMounted guard (prevent setState on unmounted)</span>
+<span class="kw">const</span> <span class="var">isMounted</span> = <span class="hk">useRef</span>(<span class="kw">false</span>);
+<span class="hk">useEffect</span>(() => {
+  <span class="var">isMounted</span>.current = <span class="kw">true</span>;
+  <span class="kw">return</span> () => { <span class="var">isMounted</span>.current = <span class="kw">false</span>; };
+}, []);
+
+<span class="cmt">// 5. Store latest callback without re-creating effect</span>
+<span class="kw">const</span> <span class="var">callbackRef</span> = <span class="hk">useRef</span>(<span class="var">callback</span>);
+<span class="hk">useEffect</span>(() => { <span class="var">callbackRef</span>.current = <span class="var">callback</span>; });
+<span class="hk">useEffect</span>(() => {
+  <span class="kw">const</span> <span class="var">id</span> = <span class="fn">setInterval</span>(() => <span class="var">callbackRef</span>.current(), <span class="num">1000</span>);
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(<span class="var">id</span>);
+}, []); <span class="cmt">// never stale — reads through ref</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- useContext -->
+  <div class="tab-content" id="hooks-usecontext">
+    <div class="def-block">
+      <div class="def-term">Definition — useContext</div>
+      <div class="def-text"><code class="ic">useContext(Context)</code> subscribes a component to a React context. It reads the current value from the <strong>nearest matching Provider</strong> above it in the component tree. When the Provider's value changes, React re-renders all consumers. Context solves <strong>prop drilling</strong> — the need to pass data through many intermediate components that don't need it themselves. It is ideal for truly "global" values: current user, theme, locale, feature flags.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>Three-Step Context Pattern</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Create the context</div><div class="step-text"><code class="ic">createContext(defaultValue)</code> — the default is used when there's no matching Provider above in the tree.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Provide it high in the tree</div><div class="step-text">Wrap the part of the tree that needs access with <code class="ic">&lt;Context.Provider value={...}&gt;</code>. The value can be anything: a primitive, an object, or a tuple of [state, setter].</div></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Consume anywhere below</div><div class="step-text"><code class="ic">const value = useContext(MyContext)</code> in any descendant component — no matter how deeply nested.</div></div></div>
+        </div>
+
+        <div class="warn-box">
+          <strong>Context re-render warning:</strong> Every component that calls <code class="ic">useContext</code> will re-render whenever the context value changes — even if it only uses a small part of it. For objects, every property change triggers re-renders in all consumers. Split large contexts into smaller ones, or use <code class="ic">useMemo</code> to stabilize the value object.
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useContext — AUTH PATTERN</div></div>
+          <pre><span class="cmt">// auth-context.js</span>
+<span class="kw">const</span> <span class="var">AuthContext</span> = <span class="fn">createContext</span>(<span class="kw">null</span>);
+
+<span class="kw">export function</span> <span class="fn">AuthProvider</span>({ <span class="var">children</span> }) {
+  <span class="kw">const</span> [<span class="var">user</span>, <span class="var">setUser</span>] = <span class="hk">useState</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">login</span> = <span class="kw">async</span> (<span class="var">email</span>, <span class="var">pass</span>) => {
+    <span class="kw">const</span> <span class="var">u</span> = <span class="kw">await</span> <span class="fn">authAPI</span>.<span class="fn">login</span>(<span class="var">email</span>, <span class="var">pass</span>);
+    <span class="fn">setUser</span>(<span class="var">u</span>);
+  };
+  <span class="kw">const</span> <span class="fn">logout</span> = () => <span class="fn">setUser</span>(<span class="kw">null</span>);
+
+  <span class="cmt">// Memoize value to prevent unnecessary re-renders</span>
+  <span class="kw">const</span> <span class="var">value</span> = <span class="hk">useMemo</span>(() => ({ <span class="var">user</span>, <span class="var">login</span>, <span class="var">logout</span> }),
+    [<span class="var">user</span>]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">AuthContext.Provider</span> <span class="attr">value</span>={<span class="var">value</span>}&gt;
+      {<span class="var">children</span>}
+    &lt;/<span class="tag">AuthContext.Provider</span>&gt;
+  );
+}
+
+<span class="cmt">// Custom hook for clean consumption</span>
+<span class="kw">export function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">const</span> <span class="var">ctx</span> = <span class="hk">useContext</span>(<span class="var">AuthContext</span>);
+  <span class="kw">if</span> (!<span class="var">ctx</span>) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'useAuth must be inside AuthProvider'</span>);
+  <span class="kw">return</span> <span class="var">ctx</span>;
+}
+
+<span class="cmt">// Usage anywhere in tree</span>
+<span class="kw">function</span> <span class="fn">NavBar</span>() {
+  <span class="kw">const</span> { <span class="var">user</span>, <span class="var">logout</span> } = <span class="fn">useAuth</span>();
+  <span class="kw">return</span> &lt;<span class="tag">span</span>&gt;Hi {<span class="var">user</span>?.name} &lt;<span class="tag">button</span> <span class="attr">onClick</span>={<span class="var">logout</span>}&gt;Logout&lt;/<span class="tag">button</span>&gt;&lt;/<span class="tag">span</span>&gt;;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Hooks -->
+  <div class="tab-content" id="hooks-custom">
+    <div class="def-block">
+      <div class="def-term">Definition — Custom Hooks</div>
+      <div class="def-text">A <strong>custom hook</strong> is a JavaScript function whose name <strong>starts with <code class="ic">use</code></strong> and that can call other hooks inside. They allow you to <strong>extract stateful logic</strong> out of a component and share it between multiple components without changing their structure. Unlike HOCs (Higher-Order Components) or render props, custom hooks don't add extra nodes to the component tree. Each component that calls a custom hook gets its own <em>independent</em> state and effects — they share the logic, not the state.</div>
+    </div>
+    <div class="interview-box">
+      <div class="ib-label">Model Interview Answer</div>
+      <div class="ib-text">Custom hooks let you <strong>abstract and reuse stateful behaviour</strong>. The key principle is that two components using the same custom hook share the <em>logic</em> but not the <em>state</em> — each has its own independent state. This is the React equivalent of creating a utility function for pure logic, but for stateful logic. Good candidates for extraction: data fetching, debouncing, window dimensions, local storage sync, keyboard shortcuts, online/offline detection, previous value tracking.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>When to Extract a Custom Hook</h2>
+        <ul>
+          <li><strong>Reuse:</strong> 2+ components need the same stateful logic</li>
+          <li><strong>Complexity:</strong> The logic deserves its own name and file</li>
+          <li><strong>Testability:</strong> You want to unit-test the logic independently</li>
+          <li><strong>Readability:</strong> Components become cleaner when logic is extracted</li>
+        </ul>
+        <h2 style="margin-top:24px">Common Custom Hooks</h2>
+        <ul>
+          <li><code class="ic">useDebounce(value, ms)</code> — delay value updates</li>
+          <li><code class="ic">useLocalStorage(key, init)</code> — persist state across sessions</li>
+          <li><code class="ic">useWindowSize()</code> — track viewport dimensions</li>
+          <li><code class="ic">useOnClickOutside(ref, handler)</code> — detect outside clicks</li>
+          <li><code class="ic">usePrevious(value)</code> — track previous render's value</li>
+          <li><code class="ic">useMediaQuery(query)</code> — responsive breakpoints in JS</li>
+          <li><code class="ic">useIntersectionObserver(ref)</code> — detect element visibility</li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">useLocalStorage CUSTOM HOOK</div></div>
+          <pre><span class="kw">function</span> <span class="fn">useLocalStorage</span>(<span class="var">key</span>, <span class="var">initialValue</span>) {
+  <span class="kw">const</span> [<span class="var">stored</span>, <span class="var">setStored</span>] = <span class="hk">useState</span>(() => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> <span class="var">item</span> = <span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="var">key</span>);
+      <span class="kw">return</span> <span class="var">item</span> ? <span class="fn">JSON</span>.<span class="fn">parse</span>(<span class="var">item</span>) : <span class="var">initialValue</span>;
+    } <span class="kw">catch</span> {
+      <span class="kw">return</span> <span class="var">initialValue</span>;
+    }
+  });
+
+  <span class="kw">const</span> <span class="fn">setValue</span> = (<span class="var">value</span>) => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> <span class="var">toStore</span> = <span class="var">value</span> <span class="kw">instanceof</span> <span class="var">Function</span>
+        ? <span class="fn">value</span>(<span class="var">stored</span>) : <span class="var">value</span>;
+      <span class="fn">setStored</span>(<span class="var">toStore</span>);
+      <span class="var">localStorage</span>.<span class="fn">setItem</span>(<span class="var">key</span>, <span class="fn">JSON</span>.<span class="fn">stringify</span>(<span class="var">toStore</span>));
+    } <span class="kw">catch</span> (<span class="var">err</span>) {
+      <span class="var">console</span>.<span class="fn">error</span>(<span class="var">err</span>);
+    }
+  };
+
+  <span class="kw">return</span> [<span class="var">stored</span>, <span class="var">setValue</span>];
+}
+
+<span class="cmt">// Usage — works exactly like useState</span>
+<span class="kw">function</span> <span class="fn">Settings</span>() {
+  <span class="kw">const</span> [<span class="var">theme</span>, <span class="var">setTheme</span>] = <span class="fn">useLocalStorage</span>(<span class="str">'theme'</span>, <span class="str">'dark'</span>);
+  <span class="kw">return</span> (
+    &lt;<span class="tag">select</span> <span class="attr">value</span>={<span class="var">theme</span>} <span class="attr">onChange</span>={<span class="var">e</span> => <span class="fn">setTheme</span>(<span class="var">e</span>.target.value)}&gt;
+      &lt;<span class="tag">option</span> <span class="attr">value</span>=<span class="str">"dark"</span>&gt;Dark&lt;/<span class="tag">option</span>&gt;
+      &lt;<span class="tag">option</span> <span class="attr">value</span>=<span class="str">"light"</span>&gt;Light&lt;/<span class="tag">option</span>&gt;
+    &lt;/<span class="tag">select</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4 — ADVANCED
+═══════════════════════════════════════════════ -->
+<div class="section" id="advanced">
+  <div class="section-header">
+    <div class="section-label">Section 04</div>
+    <div class="section-title">Advanced System Design<br>& Optimization</div>
+    <p class="section-desc">Senior roles focus on architecture, rendering efficiency, and knowing when NOT to over-optimize.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('adv','memo',this)">Memoization</button>
+    <button class="tab-btn" onclick="showTab('adv','state',this)">Global State</button>
+    <button class="tab-btn" onclick="showTab('adv','perf',this)">Code Splitting</button>
+    <button class="tab-btn" onclick="showTab('adv','patterns',this)">Design Patterns</button>
+  </div>
+
+  <div class="tab-content active" id="adv-memo">
+    <div class="def-block">
+      <div class="def-term">Definition — Memoization in React</div>
+      <div class="def-text"><strong>Memoization</strong> is an optimization technique that caches the result of an expensive operation and returns the cached result when the same inputs occur again — instead of recomputing. React provides three memoization tools: <code class="ic">React.memo</code> for components (skip re-renders), <code class="ic">useMemo</code> for computed values (skip recalculations), and <code class="ic">useCallback</code> for function references (skip reference changes). All three use <strong>shallow equality</strong> (via <code class="ic">Object.is</code>) to compare previous and current inputs.</div>
+    </div>
+
+    <div class="warn-box" style="margin-bottom:24px"><strong>Golden Rule:</strong> Don't memoize by default. Memoization has a real cost — memory to store the cache, and time to run the comparison on every render. Profile with React DevTools first. Only memoize when you've confirmed a real performance bottleneck.</div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(124,106,255,.1)">🧠</div>
+        <h3>React.memo — Skip Component Re-renders</h3>
+        <p>Wraps a component in a memoization layer. Before re-rendering, React shallowly compares the new props to the previous props. If all props are equal (<code class="ic">Object.is</code>), it reuses the last rendered output and skips the render entirely. A custom comparator function can be passed as the second argument for deep or selective comparisons.</p>
+        <div class="code-block">
+          <pre style="padding:16px"><span class="cmt">// Expensive list item — re-renders only when needed</span>
+<span class="kw">const</span> <span class="var">ProductCard</span> = <span class="fn">React.memo</span>(
+  <span class="kw">function</span> <span class="fn">ProductCard</span>({ <span class="var">product</span>, <span class="var">onAddToCart</span> }) {
+    <span class="kw">return</span> (
+      &lt;<span class="tag">div</span>&gt;
+        &lt;<span class="tag">h3</span>&gt;{<span class="var">product</span>.name}&lt;/<span class="tag">h3</span>&gt;
+        &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() => <span class="fn">onAddToCart</span>(<span class="var">product</span>.id)}&gt;
+          Add to Cart
+        &lt;/<span class="tag">button</span>&gt;
+      &lt;/<span class="tag">div</span>&gt;
+    );
+  }
+);
+<span class="cmt">// ⚠️  Only works if onAddToCart is also stable!
+// Wrap with useCallback in the parent.</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon" style="background:rgba(78,205,196,.1)">🔢</div>
+        <h3>useMemo — Cache Computed Values</h3>
+        <p>Caches the <em>result</em> of a computation. Re-computes only when the listed dependencies change. Use for expensive calculations: complex sorting, filtering large datasets, building derived data structures, or any CPU-heavy transformation. Do not use for simple calculations — the overhead of the memo itself would outweigh the benefit.</p>
+        <div class="code-block">
+          <pre style="padding:16px"><span class="cmt">// Sort 10,000 products — expensive if done every render</span>
+<span class="kw">const</span> <span class="var">sortedProducts</span> = <span class="hk">useMemo</span>(() => {
+  <span class="var">console</span>.<span class="fn">log</span>(<span class="str">'Sorting...'</span>); <span class="cmt">// runs rarely</span>
+  <span class="kw">return</span> [...<span class="var">products</span>]
+    .<span class="fn">filter</span>(<span class="var">p</span> => <span class="var">p</span>.inStock)
+    .<span class="fn">sort</span>((<span class="var">a</span>, <span class="var">b</span>) => <span class="var">a</span>.price - <span class="var">b</span>.price);
+}, [<span class="var">products</span>]); <span class="cmt">// recomputes only when products changes</span>
+
+<span class="cmt">// ❌ DON'T memo simple calculations</span>
+<span class="kw">const</span> <span class="var">double</span> = <span class="hk">useMemo</span>(() => <span class="var">n</span> * <span class="num">2</span>, [<span class="var">n</span>]); <span class="cmt">// pointless overhead</span>
+<span class="kw">const</span> <span class="var">double</span> = <span class="var">n</span> * <span class="num">2</span>; <span class="cmt">// ✅ just compute it inline</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,217,61,.1)">📎</div>
+        <h3>useCallback — Stable Function References</h3>
+        <p>Caches a <em>function reference</em>. Without it, a new function object is created on every render, causing any <code class="ic">React.memo</code> child that receives it as a prop to see a "changed" prop and re-render unnecessarily. Use when passing callbacks to memoized children, or when a function is listed as a useEffect dependency.</p>
+        <div class="code-block">
+          <pre style="padding:16px"><span class="cmt">// Parent creates a stable handleDelete reference</span>
+<span class="kw">const</span> <span class="var">handleDelete</span> = <span class="hk">useCallback</span>(
+  (<span class="var">id</span>) => {
+    <span class="fn">setProducts</span>(<span class="var">prev</span> => <span class="var">prev</span>.<span class="fn">filter</span>(<span class="var">p</span> => <span class="var">p</span>.id !== <span class="var">id</span>));
+  },
+  [] <span class="cmt">// no deps → same reference forever</span>
+);
+
+<span class="cmt">// ProductCard.memo will skip re-renders now
+// because onDelete reference is stable</span>
+{<span class="var">products</span>.<span class="fn">map</span>(<span class="var">p</span> =>
+  &lt;<span class="tag">ProductCard</span> <span class="attr">key</span>={<span class="var">p</span>.id} <span class="attr">product</span>={<span class="var">p</span>}
+               <span class="attr">onDelete</span>={<span class="var">handleDelete</span>} /&gt;
+)}</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,107,107,.1)">🔗</div>
+        <h3>The Memoization Chain</h3>
+        <p>These three tools must be used together to be effective. Using <code class="ic">React.memo</code> without <code class="ic">useCallback</code> on the passed callback is useless — the callback is a new reference every render. The full chain: <code class="ic">React.memo</code> on the child + <code class="ic">useCallback</code> on every callback prop + <code class="ic">useMemo</code> on any expensive object passed as prop.</p>
+        <div class="highlight-box"><strong>Ask during interview:</strong> "Before adding these, let me check React DevTools Profiler to confirm this component is actually re-rendering too often and causing a real performance problem." This signals engineering maturity.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="adv-state">
+    <div class="def-block">
+      <div class="def-term">Definition — Global State Management</div>
+      <div class="def-text"><strong>Global state</strong> refers to application-level data that needs to be accessed by many components at different nesting levels — current user, auth tokens, shopping cart, notification list, theme, language preference. React's own solutions (Context + useReducer) cover many cases. Third-party libraries like Redux Toolkit, Zustand, and Jotai offer additional capabilities like middleware, time-travel debugging, and optimized subscriptions.</div>
+    </div>
+
+    <table class="compare-table">
+      <thead><tr><th>Solution</th><th>Best Suited For</th><th>Trade-offs</th><th>Bundle Cost</th></tr></thead>
+      <tbody>
+        <tr><td>Context + useReducer</td><td>Low-frequency global data (theme, auth, locale). Infrequent updates.</td><td>All consumers re-render on every context change. No built-in devtools, no middleware, no async support.</td><td>0kb (built-in)</td></tr>
+        <tr><td>Redux Toolkit</td><td>Large teams, complex async (RTK Query), time-travel debugging, strict conventions needed.</td><td>More boilerplate than Zustand even with RTK. Overkill for small/medium apps. Steeper learning curve.</td><td>~16kb</td></tr>
+        <tr><td>Zustand</td><td>Medium apps needing simple global state with excellent performance. Minimal API.</td><td>Very un-opinionated — team discipline required for consistent patterns. Smaller ecosystem.</td><td>~1kb</td></tr>
+        <tr><td>Jotai / Recoil</td><td>Atomic, fine-grained subscriptions. Derived async state. Per-atom re-renders.</td><td>Newer ecosystem. Recoil is experimental/deprecated by Meta. Jotai growing fast.</td><td>~3–8kb</td></tr>
+        <tr><td>TanStack Query</td><td>Server state (fetching, caching, background refetching). Not for client-only UI state.</td><td>Not a replacement for client state management. Separate mental model needed.</td><td>~13kb</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two-col">
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">ZUSTAND — MINIMAL STORE</div></div>
+          <pre><span class="kw">import</span> { <span class="var">create</span> } <span class="kw">from</span> <span class="str">'zustand'</span>;
+
+<span class="kw">const</span> <span class="var">useCartStore</span> = <span class="fn">create</span>((<span class="var">set</span>, <span class="var">get</span>) => ({
+  <span class="var">items</span>: [],
+
+  <span class="fn">addItem</span>: (<span class="var">product</span>) =>
+    <span class="fn">set</span>(<span class="var">state</span> => ({ <span class="var">items</span>: [...<span class="var">state</span>.items, <span class="var">product</span>] })),
+
+  <span class="fn">removeItem</span>: (<span class="var">id</span>) =>
+    <span class="fn">set</span>(<span class="var">state</span> => ({
+      <span class="var">items</span>: <span class="var">state</span>.items.<span class="fn">filter</span>(<span class="var">i</span> => <span class="var">i</span>.id !== <span class="var">id</span>)
+    })),
+
+  <span class="cmt">// Derived: computed from existing state</span>
+  <span class="fn">getTotal</span>: () =>
+    <span class="fn">get</span>().items.<span class="fn">reduce</span>((<span class="var">sum</span>, <span class="var">i</span>) => <span class="var">sum</span> + <span class="var">i</span>.price, <span class="num">0</span>),
+}));
+
+<span class="cmt">// Subscribe to only what you need (fine-grained)</span>
+<span class="kw">function</span> <span class="fn">CartBadge</span>() {
+  <span class="kw">const</span> <span class="var">count</span> = <span class="fn">useCartStore</span>(<span class="var">s</span> => <span class="var">s</span>.items.length);
+  <span class="cmt">// Only re-renders when items.length changes</span>
+  <span class="kw">return</span> &lt;<span class="tag">span</span>&gt;{<span class="var">count</span>}&lt;/<span class="tag">span</span>&gt;;
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="interview-box">
+          <div class="ib-label">Model Interview Answer — State Architecture</div>
+          <div class="ib-text">I categorize state into: <strong>server state</strong> (data from APIs — use TanStack Query for caching/refetching), <strong>global client state</strong> (auth, cart, theme — Context for simple cases, Zustand for anything that updates frequently), and <strong>local UI state</strong> (modal open, form input — plain useState in the component). Putting all three in a single Redux store is an anti-pattern — it conflates concerns and makes the codebase harder to reason about.</div>
+        </div>
+        <div class="yellow-box">
+          <strong>Context Anti-pattern to mention:</strong> Putting frequently-updated data (scroll position, mouse coordinates, real-time data) in Context causes every consumer to re-render on each update. For high-frequency updates, use an external store (Zustand, Jotai) where components can subscribe to only the slice they need.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="adv-perf">
+    <div class="def-block">
+      <div class="def-term">Definition — Code Splitting</div>
+      <div class="def-text"><strong>Code splitting</strong> is the practice of dividing your JavaScript bundle into smaller chunks that are loaded on demand, rather than shipping everything upfront. <code class="ic">React.lazy</code> + <code class="ic">Suspense</code> enables component-level splitting: a component's code is not included in the initial bundle and is fetched from the server only when the component is actually rendered. This dramatically reduces Time-to-Interactive for large applications.</div>
+    </div>
+    <div class="def-block">
+      <div class="def-term">Definition — List Virtualization</div>
+      <div class="def-text"><strong>Virtualization</strong> (or windowing) is a rendering optimization for large lists where only the items <em>currently visible in the viewport</em> are rendered as real DOM nodes. As the user scrolls, off-screen items are recycled. A list of 10,000 items with virtualization renders ~15 DOM nodes instead of 10,000, reducing memory usage, paint time, and scroll jank dramatically. Libraries: <code class="ic">react-window</code>, <code class="ic">react-virtual</code>, <code class="ic">react-virtuoso</code>.</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">React.lazy + Suspense</div></div>
+          <pre><span class="kw">import</span> { <span class="var">lazy</span>, <span class="var">Suspense</span> } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { <span class="var">Routes</span>, <span class="var">Route</span> } <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+
+<span class="cmt">// These are loaded lazily — not in initial bundle</span>
+<span class="kw">const</span> <span class="var">Dashboard</span> = <span class="fn">lazy</span>(() => <span class="fn">import</span>(<span class="str">'./pages/Dashboard'</span>));
+<span class="kw">const</span> <span class="var">AdminPanel</span> = <span class="fn">lazy</span>(() => <span class="fn">import</span>(<span class="str">'./pages/Admin'</span>));
+<span class="kw">const</span> <span class="var">Reports</span>    = <span class="fn">lazy</span>(() => <span class="fn">import</span>(<span class="str">'./pages/Reports'</span>));
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="cmt">/* Suspense provides fallback during chunk load */</span>&gt;
+    &lt;<span class="tag">Suspense</span> <span class="attr">fallback</span>={&lt;<span class="tag">PageSpinner</span> /&gt;}&gt;
+      &lt;<span class="tag">Routes</span>&gt;
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="str">"/"</span>       <span class="attr">element</span>={&lt;<span class="tag">Home</span> /&gt;} /&gt;
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="str">"/dash"</span>  <span class="attr">element</span>={&lt;<span class="tag">Dashboard</span> /&gt;} /&gt;
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="str">"/admin"</span> <span class="attr">element</span>={&lt;<span class="tag">AdminPanel</span> /&gt;} /&gt;
+      &lt;/<span class="tag">Routes</span>&gt;
+    &lt;/<span class="tag">Suspense</span>&gt;
+    &lt;/&gt;
+  );
+}
+<span class="cmt">// Admin code is never sent to non-admin users
+// Dashboard code loads only when navigated to</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">react-window — VIRTUALIZED LIST</div></div>
+          <pre><span class="kw">import</span> { <span class="var">FixedSizeList</span> } <span class="kw">from</span> <span class="str">'react-window'</span>;
+<span class="kw">import</span> { <span class="var">AutoSizer</span> } <span class="kw">from</span> <span class="str">'react-virtualized-auto-sizer'</span>;
+
+<span class="cmt">// Row renderer — receives style for absolute positioning</span>
+<span class="kw">const</span> <span class="fn">Row</span> = ({ <span class="var">index</span>, <span class="var">style</span>, <span class="var">data</span> }) => (
+  &lt;<span class="tag">div</span> <span class="attr">style</span>={<span class="var">style</span>} <span class="attr">className</span>=<span class="str">"row"</span>&gt;
+    &lt;<span class="tag">img</span> <span class="attr">src</span>={<span class="var">data</span>[<span class="var">index</span>].avatar} /&gt;
+    &lt;<span class="tag">span</span>&gt;{<span class="var">data</span>[<span class="var">index</span>].name}&lt;/<span class="tag">span</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+);
+
+<span class="kw">function</span> <span class="fn">UserDirectory</span>({ <span class="var">users</span> }) {
+  <span class="kw">return</span> (
+    <span class="cmt">{/* AutoSizer fills the container dynamically */}</span>
+    &lt;<span class="tag">AutoSizer</span>&gt;
+      {({ <span class="var">height</span>, <span class="var">width</span> }) => (
+        &lt;<span class="tag">FixedSizeList</span>
+          <span class="attr">height</span>={<span class="var">height</span>}
+          <span class="attr">width</span>={<span class="var">width</span>}
+          <span class="attr">itemCount</span>={<span class="var">users</span>.length}
+          <span class="attr">itemSize</span>={<span class="num">72</span>}         <span class="cmt">// each row is 72px tall</span>
+          <span class="attr">itemData</span>={<span class="var">users</span>}
+        &gt;
+          {<span class="var">Row</span>}
+        &lt;/<span class="tag">FixedSizeList</span>&gt;
+      )}
+    &lt;/<span class="tag">AutoSizer</span>&gt;
+  );
+}
+<span class="cmt">// 50,000 users → only ~10 DOM nodes at any time!</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="adv-patterns">
+    <h2>Essential React Design Patterns</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(124,106,255,.1)">🎭</div>
+        <h3>Compound Components</h3>
+        <p>A pattern where multiple components work together to form a single cohesive UI, sharing implicit state via Context. Think of <code class="ic">&lt;select&gt;</code> and <code class="ic">&lt;option&gt;</code> — they are separate elements but work together. Used in design systems for components like tabs, accordions, dropdowns, and form fields.</p>
+        <div class="code-block"><pre style="padding:14px;font-size:12px"><span class="cmt">// Usage: expressive and flexible</span>
+&lt;<span class="tag">Tabs</span>&gt;
+  &lt;<span class="tag">Tabs.List</span>&gt;
+    &lt;<span class="tag">Tabs.Tab</span>&gt;Account&lt;/<span class="tag">Tabs.Tab</span>&gt;
+    &lt;<span class="tag">Tabs.Tab</span>&gt;Security&lt;/<span class="tag">Tabs.Tab</span>&gt;
+  &lt;/<span class="tag">Tabs.List</span>&gt;
+  &lt;<span class="tag">Tabs.Panel</span>&gt;Account settings...&lt;/<span class="tag">Tabs.Panel</span>&gt;
+  &lt;<span class="tag">Tabs.Panel</span>&gt;Security settings...&lt;/<span class="tag">Tabs.Panel</span>&gt;
+&lt;/<span class="tag">Tabs</span>&gt;</pre></div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(78,205,196,.1)">🪝</div>
+        <h3>Render Props (Legacy but Asked)</h3>
+        <p>A component accepts a function as a prop (<code class="ic">render</code> or <code class="ic">children</code>) and calls it with internal state. The parent controls what to render, the child controls the state/logic. Mostly superseded by custom hooks, but still relevant for integrating with older libraries or when you need DOM access with injected state.</p>
+        <div class="code-block"><pre style="padding:14px;font-size:12px"><span class="cmt">// Mouse tracker with render prop</span>
+&lt;<span class="tag">MouseTracker</span>&gt;
+  {({ <span class="var">x</span>, <span class="var">y</span> }) => (
+    &lt;<span class="tag">span</span>&gt;Mouse: {<span class="var">x</span>}, {<span class="var">y</span>}&lt;/<span class="tag">span</span>&gt;
+  )}
+&lt;/<span class="tag">MouseTracker</span>&gt;</pre></div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,217,61,.1)">🧱</div>
+        <h3>Higher-Order Components (HOC)</h3>
+        <p>A function that takes a component and returns a new enhanced component, adding props or behaviour. Used for cross-cutting concerns: logging, auth guards, analytics, feature flags. Largely replaced by hooks but HOCs are still the only option when you need to wrap components at the meta/library level (e.g. Redux <code class="ic">connect</code>).</p>
+        <div class="code-block"><pre style="padding:14px;font-size:12px"><span class="kw">const</span> <span class="var">AuthPage</span> = <span class="fn">withAuth</span>(<span class="var">DashboardPage</span>);
+<span class="kw">const</span> <span class="var">TrackedBtn</span> = <span class="fn">withAnalytics</span>(<span class="var">Button</span>);</pre></div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,107,107,.1)">🚦</div>
+        <h3>Error Boundaries</h3>
+        <p>Class components (or the Suspense+ErrorBoundary pattern) that catch JavaScript errors anywhere in their child component tree, log them, and display a fallback UI instead of crashing the whole app. <code class="ic">componentDidCatch</code> + <code class="ic">getDerivedStateFromError</code> are the class lifecycle methods involved. In React 19, use the new <code class="ic">useErrorBoundary</code> hook.</p>
+        <div class="code-block"><pre style="padding:14px;font-size:12px">&lt;<span class="tag">ErrorBoundary</span> <span class="attr">fallback</span>={&lt;<span class="tag">Error</span> /&gt;}&gt;
+  &lt;<span class="tag">WidgetThatMightCrash</span> /&gt;
+&lt;/<span class="tag">ErrorBoundary</span>&gt;</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5 — CODING ROUNDS
+═══════════════════════════════════════════════ -->
+<div class="section" id="coding">
+  <div class="section-header">
+    <div class="section-label">Section 05</div>
+    <div class="section-title">Practical Machine<br>Coding Rounds</div>
+    <p class="section-desc">Three fully worked examples with step-by-step reasoning, examiner checklists, and common edge cases to handle.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('code','search',this)">Debounced Search</button>
+    <button class="tab-btn" onclick="showTab('code','form',this)">Multi-Step Form</button>
+    <button class="tab-btn" onclick="showTab('code','page',this)">Pagination</button>
+  </div>
+
+  <div class="tab-content active" id="code-search">
+    <div class="two-col">
+      <div>
+        <h2>Debounced Product Search</h2>
+        <p class="body">One of the most common coding round tasks. The examiner is testing whether you understand: (1) why debouncing is needed, (2) how to implement it without a library, (3) how to cancel stale requests, and (4) how to manage all three UI states cleanly.</p>
+
+        <div class="interview-box">
+          <div class="ib-label">Why Debounce?</div>
+          <div class="ib-text">Without debouncing, every keystroke triggers an API call. Typing "react" fires 5 calls in ~200ms. The last call to <em>resolve</em> might not be the last call <em>sent</em> (race condition). Debouncing waits until the user pauses typing for N milliseconds before firing — reducing API calls and eliminating race conditions.</div>
+        </div>
+
+        <h3 class="sub">Examiner Checklist</h3>
+        <ul>
+          <li>✅ Custom <code class="ic">useDebounce</code> hook — not just inline setTimeout</li>
+          <li>✅ AbortController to cancel in-flight requests on unmount/change</li>
+          <li>✅ Three states: loading, error, data (empty is handled)</li>
+          <li>✅ <code class="ic">key</code> prop on rendered list items</li>
+          <li>✅ <code class="ic">res.ok</code> check — fetch doesn't throw on 404/500</li>
+          <li>✅ Input has a label for accessibility</li>
+          <li>✅ Ignore AbortError in catch block</li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">DEBOUNCED SEARCH — COMPLETE SOLUTION</div></div>
+          <pre><span class="cmt">// 1. Reusable debounce hook</span>
+<span class="kw">function</span> <span class="fn">useDebounce</span>(<span class="var">value</span>, <span class="var">delay</span> = <span class="num">400</span>) {
+  <span class="kw">const</span> [<span class="var">debounced</span>, <span class="var">setDebounced</span>] = <span class="hk">useState</span>(<span class="var">value</span>);
+  <span class="hk">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="var">timer</span> = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(<span class="var">value</span>), <span class="var">delay</span>);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(<span class="var">timer</span>); <span class="cmt">// cancel on re-type</span>
+  }, [<span class="var">value</span>, <span class="var">delay</span>]);
+  <span class="kw">return</span> <span class="var">debounced</span>;
+}
+
+<span class="cmt">// 2. Main search component</span>
+<span class="kw">function</span> <span class="fn">ProductSearch</span>() {
+  <span class="kw">const</span> [<span class="var">query</span>,   <span class="var">setQuery</span>]   = <span class="hk">useState</span>(<span class="str">''</span>);
+  <span class="kw">const</span> [<span class="var">results</span>, <span class="var">setResults</span>] = <span class="hk">useState</span>([]);
+  <span class="kw">const</span> [<span class="var">status</span>,  <span class="var">setStatus</span>]  = <span class="hk">useState</span>(<span class="str">'idle'</span>);
+  <span class="kw">const</span> <span class="var">debouncedQuery</span> = <span class="fn">useDebounce</span>(<span class="var">query</span>, <span class="num">400</span>);
+
+  <span class="hk">useEffect</span>(() => {
+    <span class="kw">if</span> (!<span class="var">debouncedQuery</span>.<span class="fn">trim</span>()) {
+      <span class="fn">setResults</span>([]); <span class="fn">setStatus</span>(<span class="str">'idle'</span>); <span class="kw">return</span>;
+    }
+
+    <span class="kw">const</span> <span class="var">ctrl</span> = <span class="kw">new</span> <span class="fn">AbortController</span>();
+    <span class="fn">setStatus</span>(<span class="str">'loading'</span>);
+
+    (<span class="kw">async</span> () => {
+      <span class="kw">try</span> {
+        <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(
+          <span class="str">`/api/products?q=${<span class="fn">encodeURIComponent</span>(<span class="var">debouncedQuery</span>)}`</span>,
+          { <span class="var">signal</span>: <span class="var">ctrl</span>.signal }
+        );
+        <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP ${<span class="var">res</span>.status}`</span>);
+        <span class="kw">const</span> <span class="var">data</span> = <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+        <span class="fn">setResults</span>(<span class="var">data</span>);
+        <span class="fn">setStatus</span>(<span class="str">'success'</span>);
+      } <span class="kw">catch</span> (<span class="var">err</span>) {
+        <span class="kw">if</span> (<span class="var">err</span>.name !== <span class="str">'AbortError'</span>) <span class="fn">setStatus</span>(<span class="str">'error'</span>);
+      }
+    })();
+    <span class="kw">return</span> () => <span class="var">ctrl</span>.<span class="fn">abort</span>();
+  }, [<span class="var">debouncedQuery</span>]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">label</span> <span class="attr">htmlFor</span>=<span class="str">"search"</span>&gt;Search Products&lt;/<span class="tag">label</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">id</span>=<span class="str">"search"</span> <span class="attr">value</span>={<span class="var">query</span>}
+             <span class="attr">onChange</span>={<span class="var">e</span> => <span class="fn">setQuery</span>(<span class="var">e</span>.target.value)}
+             <span class="attr">placeholder</span>=<span class="str">"Type to search..."</span> /&gt;
+
+      {<span class="var">status</span> === <span class="str">'loading'</span> && &lt;<span class="tag">p</span>&gt;Searching...&lt;/<span class="tag">p</span>&gt;}
+      {<span class="var">status</span> === <span class="str">'error'</span>   && &lt;<span class="tag">p</span>&gt;Something went wrong.&lt;/<span class="tag">p</span>&gt;}
+      {<span class="var">status</span> === <span class="str">'success'</span> && !<span class="var">results</span>.length && (
+        &lt;<span class="tag">p</span>&gt;No products found for "{<span class="var">debouncedQuery</span>}"&lt;/<span class="tag">p</span>&gt;
+      )}
+      &lt;<span class="tag">ul</span>&gt;
+        {<span class="var">results</span>.<span class="fn">map</span>(<span class="var">p</span> => (
+          &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">p</span>.id}&gt;{<span class="var">p</span>.name} — ${<span class="var">p</span>.price}&lt;/<span class="tag">li</span>&gt;
+        ))}
+      &lt;/<span class="tag">ul</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="code-form">
+    <div class="two-col">
+      <div>
+        <h2>Multi-Step Form</h2>
+        <p class="body">Tests your ability to manage complex state across multiple views, validate per-step before advancing, and present a clean review before submission.</p>
+        <div class="interview-box">
+          <div class="ib-label">Key Design Decisions</div>
+          <div class="ib-text">Use <code class="ic">useReducer</code> for multi-step form state because: (1) all fields + step number live in one place; (2) named action types (NEXT, PREV, UPDATE, RESET) self-document the transitions; (3) the reducer is a pure function — easy to unit test.</div>
+        </div>
+        <h3 class="sub">Examiner Checklist</h3>
+        <ul>
+          <li>✅ useReducer for multi-field state</li>
+          <li>✅ Per-step validation before advancing</li>
+          <li>✅ Disable Next button when validation fails</li>
+          <li>✅ Progress indicator (step N of M)</li>
+          <li>✅ Review step shows all collected data</li>
+          <li>✅ Loading state during async submit</li>
+          <li>✅ Error handling on submit failure</li>
+          <li>✅ RESET after success</li>
+        </ul>
+        <div class="lifecycle-flow" style="margin-top:20px">
+          <div class="lf-item"><div class="lf-dot"></div><div class="lf-body"><div class="lf-title">Step 1 — Personal Info</div><div class="lf-desc">name (required, min 2 chars), email (must include @), phone (optional)</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--accent4)"></div><div class="lf-body"><div class="lf-title">Step 2 — Account Setup</div><div class="lf-desc">username (min 3 chars, alphanumeric), password (min 8, has uppercase + number)</div></div></div>
+          <div class="lf-item"><div class="lf-dot" style="border-color:var(--green)"></div><div class="lf-body"><div class="lf-title">Step 3 — Review & Submit</div><div class="lf-desc">Show summary, POST to API, handle success/error</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">MULTI-STEP FORM — COMPLETE SOLUTION</div></div>
+          <pre><span class="kw">const</span> <span class="var">STEPS</span> = [<span class="str">'Personal'</span>, <span class="str">'Account'</span>, <span class="str">'Review'</span>];
+
+<span class="kw">const</span> <span class="var">init</span> = { <span class="var">step</span>:<span class="num">0</span>, <span class="var">name</span>:<span class="str">''</span>, <span class="var">email</span>:<span class="str">''</span>,
+               <span class="var">username</span>:<span class="str">''</span>, <span class="var">password</span>:<span class="str">''</span> };
+
+<span class="kw">function</span> <span class="fn">formReducer</span>(<span class="var">state</span>, <span class="var">action</span>) {
+  <span class="kw">switch</span> (<span class="var">action</span>.type) {
+    <span class="kw">case</span> <span class="str">'UPDATE'</span>:
+      <span class="kw">return</span> { ...<span class="var">state</span>, [<span class="var">action</span>.field]: <span class="var">action</span>.value };
+    <span class="kw">case</span> <span class="str">'NEXT'</span>: <span class="kw">return</span> { ...<span class="var">state</span>, <span class="var">step</span>: <span class="var">state</span>.step + <span class="num">1</span> };
+    <span class="kw">case</span> <span class="str">'PREV'</span>: <span class="kw">return</span> { ...<span class="var">state</span>, <span class="var">step</span>: <span class="var">state</span>.step - <span class="num">1</span> };
+    <span class="kw">case</span> <span class="str">'RESET'</span>: <span class="kw">return</span> <span class="var">init</span>;
+    <span class="kw">default</span>: <span class="kw">return</span> <span class="var">state</span>;
+  }
+}
+
+<span class="kw">function</span> <span class="fn">validate</span>(<span class="var">state</span>) {
+  <span class="kw">if</span> (<span class="var">state</span>.step === <span class="num">0</span>)
+    <span class="kw">return</span> <span class="var">state</span>.name.<span class="var">length</span> >= <span class="num">2</span> && <span class="var">state</span>.email.<span class="fn">includes</span>(<span class="str">'@'</span>);
+  <span class="kw">if</span> (<span class="var">state</span>.step === <span class="num">1</span>)
+    <span class="kw">return</span> <span class="var">state</span>.username.<span class="var">length</span> >= <span class="num">3</span> && <span class="var">state</span>.password.<span class="var">length</span> >= <span class="num">8</span>;
+  <span class="kw">return</span> <span class="kw">true</span>;
+}
+
+<span class="kw">function</span> <span class="fn">MultiStepForm</span>() {
+  <span class="kw">const</span> [<span class="var">form</span>, <span class="var">dispatch</span>] = <span class="hk">useReducer</span>(<span class="var">formReducer</span>, <span class="var">init</span>);
+  <span class="kw">const</span> [<span class="var">submitting</span>, <span class="var">setSubmitting</span>] = <span class="hk">useState</span>(<span class="kw">false</span>);
+  <span class="kw">const</span> [<span class="var">error</span>, <span class="var">setError</span>] = <span class="hk">useState</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">update</span> = (<span class="var">field</span>) => (<span class="var">e</span>) =>
+    <span class="fn">dispatch</span>({ <span class="var">type</span>: <span class="str">'UPDATE'</span>, <span class="var">field</span>, <span class="var">value</span>: <span class="var">e</span>.target.value });
+
+  <span class="kw">const</span> <span class="fn">submit</span> = <span class="kw">async</span> () => {
+    <span class="fn">setSubmitting</span>(<span class="kw">true</span>); <span class="fn">setError</span>(<span class="kw">null</span>);
+    <span class="kw">try</span> {
+      <span class="kw">await</span> <span class="fn">registerUser</span>(<span class="var">form</span>);
+      <span class="fn">dispatch</span>({ <span class="var">type</span>: <span class="str">'RESET'</span> }); <span class="cmt">// success</span>
+    } <span class="kw">catch</span> (<span class="var">err</span>) { <span class="fn">setError</span>(<span class="var">err</span>.message); }
+    <span class="kw">finally</span> { <span class="fn">setSubmitting</span>(<span class="kw">false</span>); }
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      <span class="cmt">{/* Progress */}</span>
+      &lt;<span class="tag">p</span>&gt;Step {<span class="var">form</span>.step + <span class="num">1</span>} of {<span class="var">STEPS</span>.length}: {<span class="var">STEPS</span>[<span class="var">form</span>.step]}&lt;/<span class="tag">p</span>&gt;
+
+      {<span class="var">form</span>.step === <span class="num">0</span> && (
+        &lt;&gt;
+          &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">form</span>.name}  <span class="attr">onChange</span>={<span class="fn">update</span>(<span class="str">'name'</span>)}  <span class="attr">placeholder</span>=<span class="str">"Full Name"</span> /&gt;
+          &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">form</span>.email} <span class="attr">onChange</span>={<span class="fn">update</span>(<span class="str">'email'</span>)} <span class="attr">placeholder</span>=<span class="str">"Email"</span> /&gt;
+        &lt;/&gt;
+      )}
+      {<span class="var">form</span>.step === <span class="num">1</span> && (
+        &lt;&gt;
+          &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">form</span>.username} <span class="attr">onChange</span>={<span class="fn">update</span>(<span class="str">'username'</span>)} <span class="attr">placeholder</span>=<span class="str">"Username"</span> /&gt;
+          &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="str">"password"</span> <span class="attr">value</span>={<span class="var">form</span>.password}
+                 <span class="attr">onChange</span>={<span class="fn">update</span>(<span class="str">'password'</span>)} <span class="attr">placeholder</span>=<span class="str">"Password"</span> /&gt;
+        &lt;/&gt;
+      )}
+      {<span class="var">form</span>.step === <span class="num">2</span> && (
+        &lt;<span class="tag">div</span>&gt;&lt;<span class="tag">p</span>&gt;{<span class="var">form</span>.name} | {<span class="var">form</span>.email} | @{<span class="var">form</span>.username}&lt;/<span class="tag">p</span>&gt;&lt;/<span class="tag">div</span>&gt;
+      )}
+
+      {<span class="var">error</span> && &lt;<span class="tag">p</span> <span class="attr">style</span>={{<span class="var">color</span>:<span class="str">'red'</span>}}&gt;{<span class="var">error</span>}&lt;/<span class="tag">p</span>&gt;}
+
+      &lt;<span class="tag">div</span>&gt;
+        {<span class="var">form</span>.step &gt; <span class="num">0</span> && (
+          &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() => <span class="fn">dispatch</span>({<span class="var">type</span>:<span class="str">'PREV'</span>})}&gt;Back&lt;/<span class="tag">button</span>&gt;
+        )}
+        {<span class="var">form</span>.step &lt; <span class="var">STEPS</span>.length - <span class="num">1</span> ? (
+          &lt;<span class="tag">button</span> <span class="attr">disabled</span>={!<span class="fn">validate</span>(<span class="var">form</span>)}
+                  <span class="attr">onClick</span>={() => <span class="fn">dispatch</span>({<span class="var">type</span>:<span class="str">'NEXT'</span>})}&gt;
+            Next
+          &lt;/<span class="tag">button</span>&gt;
+        ) : (
+          &lt;<span class="tag">button</span> <span class="attr">disabled</span>={<span class="var">submitting</span>} <span class="attr">onClick</span>={<span class="var">submit</span>}&gt;
+            {<span class="var">submitting</span> ? <span class="str">'Submitting...'</span> : <span class="str">'Submit'</span>}
+          &lt;/<span class="tag">button</span>&gt;
+        )}
+      &lt;/<span class="tag">div</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="code-page">
+    <div class="two-col">
+      <div>
+        <h2>Pagination with useMemo</h2>
+        <p class="body">A staple coding round question. Shows your understanding of slice math, derived state, memoization, and edge cases like empty results or a single page.</p>
+        <div class="interview-box">
+          <div class="ib-label">Key Formulas</div>
+          <div class="ib-text">
+            <code class="ic">totalPages = Math.ceil(data.length / pageSize)</code><br>
+            <code class="ic">startIndex = (currentPage - 1) * pageSize</code><br>
+            <code class="ic">pageData = data.slice(startIndex, startIndex + pageSize)</code>
+          </div>
+        </div>
+        <h3 class="sub">Examiner Checklist</h3>
+        <ul>
+          <li>✅ Reset to page 1 when data/filter changes</li>
+          <li>✅ Disable Prev on page 1, Next on last page</li>
+          <li>✅ Handle empty data gracefully</li>
+          <li>✅ useMemo to avoid slicing on every render</li>
+          <li>✅ Show "Page X of Y" / "No results" states</li>
+          <li>✅ Accessible prev/next button labels</li>
+        </ul>
+        <div class="warn-box"><strong>Common mistake:</strong> Not resetting page to 1 when the dataset changes (e.g. after a search). If you're on page 5 and apply a filter that returns 6 results, page 5 is now out of bounds.</div>
+      </div>
+      <div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-title">PAGINATION HOOK + COMPONENT</div></div>
+          <pre><span class="kw">function</span> <span class="fn">usePagination</span>(<span class="var">data</span>, <span class="var">pageSize</span> = <span class="num">10</span>) {
+  <span class="kw">const</span> [<span class="var">page</span>, <span class="var">setPage</span>] = <span class="hk">useState</span>(<span class="num">1</span>);
+
+  <span class="cmt">// Reset to page 1 whenever the data array changes</span>
+  <span class="hk">useEffect</span>(() => <span class="fn">setPage</span>(<span class="num">1</span>), [<span class="var">data</span>]);
+
+  <span class="kw">const</span> <span class="var">totalPages</span> = <span class="fn">Math</span>.<span class="fn">max</span>(<span class="num">1</span>, <span class="fn">Math</span>.<span class="fn">ceil</span>(<span class="var">data</span>.length / <span class="var">pageSize</span>));
+
+  <span class="cmt">// Only re-slice when data, page, or pageSize changes</span>
+  <span class="kw">const</span> <span class="var">pageData</span> = <span class="hk">useMemo</span>(() => {
+    <span class="kw">const</span> <span class="var">start</span> = (<span class="var">page</span> - <span class="num">1</span>) * <span class="var">pageSize</span>;
+    <span class="kw">return</span> <span class="var">data</span>.<span class="fn">slice</span>(<span class="var">start</span>, <span class="var">start</span> + <span class="var">pageSize</span>);
+  }, [<span class="var">data</span>, <span class="var">page</span>, <span class="var">pageSize</span>]);
+
+  <span class="kw">return</span> {
+    <span class="var">pageData</span>, <span class="var">page</span>, <span class="var">totalPages</span>,
+    <span class="fn">prevPage</span>:   () => <span class="fn">setPage</span>(<span class="var">p</span> => <span class="fn">Math</span>.<span class="fn">max</span>(<span class="num">1</span>, <span class="var">p</span> - <span class="num">1</span>)),
+    <span class="fn">nextPage</span>:   () => <span class="fn">setPage</span>(<span class="var">p</span> => <span class="fn">Math</span>.<span class="fn">min</span>(<span class="var">totalPages</span>, <span class="var">p</span> + <span class="num">1</span>)),
+    <span class="fn">goToPage</span>:   (<span class="var">n</span>) => <span class="fn">setPage</span>(<span class="fn">Math</span>.<span class="fn">max</span>(<span class="num">1</span>, <span class="fn">Math</span>.<span class="fn">min</span>(<span class="var">n</span>, <span class="var">totalPages</span>))),
+    <span class="var">hasPrev</span>:    <span class="var">page</span> > <span class="num">1</span>,
+    <span class="var">hasNext</span>:    <span class="var">page</span> < <span class="var">totalPages</span>,
+  };
+}
+
+<span class="cmt">// Usage with search + pagination combined</span>
+<span class="kw">function</span> <span class="fn">ProductList</span>({ <span class="var">allProducts</span> }) {
+  <span class="kw">const</span> [<span class="var">search</span>, <span class="var">setSearch</span>] = <span class="hk">useState</span>(<span class="str">''</span>);
+
+  <span class="cmt">// Derived state — filter before paginating</span>
+  <span class="kw">const</span> <span class="var">filtered</span> = <span class="hk">useMemo</span>(() =>
+    <span class="var">allProducts</span>.<span class="fn">filter</span>(<span class="var">p</span> =>
+      <span class="var">p</span>.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(<span class="var">search</span>.<span class="fn">toLowerCase</span>())
+    ),
+    [<span class="var">allProducts</span>, <span class="var">search</span>]
+  );
+
+  <span class="kw">const</span> { <span class="var">pageData</span>, <span class="var">page</span>, <span class="var">totalPages</span>,
+          <span class="var">prevPage</span>, <span class="var">nextPage</span>, <span class="var">hasPrev</span>, <span class="var">hasNext</span> }
+    = <span class="fn">usePagination</span>(<span class="var">filtered</span>, <span class="num">12</span>);
+  <span class="cmt">// Changing search resets page to 1 automatically!</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">value</span>={<span class="var">search</span>} <span class="attr">onChange</span>={<span class="var">e</span> => <span class="fn">setSearch</span>(<span class="var">e</span>.target.value)}
+             <span class="attr">placeholder</span>=<span class="str">"Filter products..."</span> /&gt;
+
+      {<span class="var">pageData</span>.<span class="var">length</span> === <span class="num">0</span>
+        ? &lt;<span class="tag">p</span>&gt;No results found.&lt;/<span class="tag">p</span>&gt;
+        : &lt;<span class="tag">ul</span>&gt;{<span class="var">pageData</span>.<span class="fn">map</span>(<span class="var">p</span> =>
+            &lt;<span class="tag">li</span> <span class="attr">key</span>={<span class="var">p</span>.id}&gt;{<span class="var">p</span>.name}&lt;/<span class="tag">li</span>&gt;
+          )}&lt;/<span class="tag">ul</span>&gt;
+      }
+
+      &lt;<span class="tag">nav</span> <span class="attr">aria-label</span>=<span class="str">"Pagination"</span>&gt;
+        &lt;<span class="tag">button</span> <span class="attr">onClick</span>={<span class="var">prevPage</span>} <span class="attr">disabled</span>={!<span class="var">hasPrev</span>}
+                <span class="attr">aria-label</span>=<span class="str">"Previous page"</span>&gt;←&lt;/<span class="tag">button</span>&gt;
+        &lt;<span class="tag">span</span>&gt;{<span class="var">page</span>} / {<span class="var">totalPages</span>}&lt;/<span class="tag">span</span>&gt;
+        &lt;<span class="tag">button</span> <span class="attr">onClick</span>={<span class="var">nextPage</span>} <span class="attr">disabled</span>={!<span class="var">hasNext</span>}
+                <span class="attr">aria-label</span>=<span class="str">"Next page"</span>&gt;→&lt;/<span class="tag">button</span>&gt;
+      &lt;/<span class="tag">nav</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  );
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 6 — QUIZ
+═══════════════════════════════════════════════ -->
+<div class="section" id="quiz">
+  <div class="section-header">
+    <div class="section-label">Quick Quiz</div>
+    <div class="section-title">Test Your<br>Knowledge</div>
+    <p class="section-desc">Real interview questions. Click any option to see the answer and explanation.</p>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. What will happen if you call useState inside an if statement?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q1')">React silently ignores the conditional hook call</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q1')">React throws an error because hooks must be called in the same order on every render</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q1')">The component re-renders twice to reconcile the difference</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q1')">It's fine as long as the condition never changes at runtime</button>
+    </div>
+    <div class="quiz-feedback" id="q1">React tracks hooks by their call order, stored as a linked list per component instance. If a hook is skipped (condition is false), all subsequent hooks shift position, causing each subsequent hook to read the wrong state cell. React throws an invariant violation error to prevent this. This is why the "Rules of Hooks" lint rule exists — ESLint's eslint-plugin-react-hooks catches this statically.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. A parent renders. It passes an inline function <code style="font-family:'DM Mono',monospace;font-size:13px">() => handleDelete(id)</code> as a prop to a React.memo child. Does the child re-render?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q2')">No — React.memo detects that the function logic is identical</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q2')">Yes — the inline function is a new reference on each parent render, so React.memo's shallow comparison sees a changed prop</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q2')">Only if the id value changed</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q2')">React.memo does a deep comparison for functions</button>
+    </div>
+    <div class="quiz-feedback" id="q2">React.memo uses Object.is() for prop comparison — which for functions checks reference equality. Every parent render creates a new function object in memory. <code style="font-family:'DM Mono',monospace;font-size:12px">() => handleDelete(id)</code> on render 1 and <code style="font-family:'DM Mono',monospace;font-size:12px">() => handleDelete(id)</code> on render 2 are two different objects. React.memo sees "prop changed" and re-renders the child, negating all memoization benefit. Fix: wrap the callback in useCallback in the parent.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. useEffect runs after every render. You want it to run only on mount. What do you do?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q3')">Pass null as the second argument</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q3')">Add a boolean flag condition inside the effect</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q3')">Pass an empty array [] as the second argument</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q3')">Use useLayoutEffect instead, which runs only once</button>
+    </div>
+    <div class="quiz-feedback" id="q3">The dependency array tells React when to re-run the effect. With an empty array [], React compares no dependencies between renders — there's never a "change" to trigger a re-run, so the effect runs only once after the initial mount. The cleanup function (if returned) still runs on unmount. Note: using <code style="font-family:'DM Mono',monospace;font-size:12px">null</code> causes the same behaviour as no array (every render). useLayoutEffect also respects the dependency array identically — it just fires at a different time.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. What is the difference between useMemo and useCallback?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q4')">They are the same hook, just different names for readability</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q4')">useMemo is for class components, useCallback is for function components</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q4')">useMemo caches the return value of a function; useCallback caches the function itself</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q4')">useCallback has better performance since it doesn't need to evaluate anything</button>
+    </div>
+    <div class="quiz-feedback" id="q4">useMemo(() => compute(), [deps]) — calls the function and caches its return value. Every time deps change, it recomputes. Used for expensive calculations. useCallback(() => fn, [deps]) — caches the function reference itself, not its return value. Equivalent to useMemo(() => () => fn, [deps]). Used to give memoized children stable callback references. In fact, useCallback(fn, deps) is exactly useMemo(() => fn, deps).</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">5. Why should you never use array index as the key prop for a dynamic list?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q5')">It causes worse performance because index lookup is O(n)</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q5')">React throws an error if it finds index keys</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q5')">If items are reordered, added, or removed, index keys cause React to reuse the wrong component state for each position — leading to bugs like mismatched inputs</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q5')">Index keys are deprecated in React 18</button>
+    </div>
+    <div class="quiz-feedback" id="q5">React's reconciler uses the key to match old and new virtual DOM nodes. With index keys, if you remove item at index 0, every remaining item's index shifts by -1. React thinks "index 0 still exists" — it reuses the old DOM node and just updates its props, potentially applying one item's state to another. Classic bug: controlled inputs showing values from the wrong item after deletion. Always use stable, unique IDs from your data. Only use index as key for static lists that never change order or length.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">6. What is a "stale closure" in React and how do you fix it?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q6')">When a component renders slowly due to a large component tree</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q6')">When a useEffect callback closes over an initial state value and never sees updated values because the dependency array is empty []</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q6')">When state is set to null accidentally</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q6')">When two components share state incorrectly through props</button>
+    </div>
+    <div class="quiz-feedback" id="q6">A stale closure happens because the effect callback is a closure that captured the state variable at creation time. With an empty [], the callback is created once on mount and never re-created — so it forever sees the initial value. Fixes: (1) Add the variable to the dependency array — React will recreate the closure with the fresh value. (2) Use the functional updater: <code style="font-family:'DM Mono',monospace;font-size:12px">setState(prev => prev + 1)</code> — this doesn't read the closure value; it reads from React's internal store. (3) Use useRef to store a mutable latest-value container that doesn't need to be in deps.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">7. When should you use useReducer instead of useState?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'q7')">Always — useReducer is strictly more powerful</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q7')">Only when building something like Redux for the whole app</button>
+      <button class="quiz-opt" onclick="answer(this,true,'q7')">When state has multiple related sub-values updated together, transitions have meaningful names, or when next state depends on previous in complex ways</button>
+      <button class="quiz-opt" onclick="answer(this,false,'q7')">Only when the component has more than 5 state variables</button>
+    </div>
+    <div class="quiz-feedback" id="q7">The decision is about complexity and clarity. useState is perfect for 1-3 independent values. Switch to useReducer when: (1) multiple fields need to update atomically (e.g. a form with step + fields + errors); (2) state transitions have domain-meaningful names (ADD_TO_CART, CHECKOUT, CLEAR) that serve as documentation; (3) the next state depends on the current state in complex conditional logic; or (4) you want the state logic to be testable as a pure function completely independent of React.</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>React Interview Mastery — Complete Deep-Dive Study Guide</p>
+  <p style="margin-top:6px;font-size:11px;opacity:.5">JS Prerequisites · Core React · Hooks · Advanced Optimization · Coding Rounds · Quiz</p>
+</footer>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showTab(sectionPrefix, tabId, btn) {
+    const allTabs = document.querySelectorAll(`[id^="${sectionPrefix}-"]`);
+    allTabs.forEach(t => t.classList.remove('active'));
+    btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const target = document.getElementById(`${sectionPrefix}-${tabId}`);
+    if (target) target.classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function answer(btn, correct, qid) {
+    const card = btn.closest('.quiz-card');
+    const feedback = document.getElementById(qid);
+    card.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+    if (correct) {
+      btn.classList.add('correct');
+      feedback.innerHTML = '✅ Correct! ' + feedback.innerHTML;
+      feedback.className = 'quiz-feedback show correct';
+    } else {
+      btn.classList.add('wrong');
+      feedback.innerHTML = '❌ Not quite. ' + feedback.innerHTML;
+      feedback.className = 'quiz-feedback show wrong';
+      // highlight correct answer
+      card.querySelectorAll('.quiz-opt').forEach(b => {
+        if (!b.classList.contains('wrong')) { /* let correct show naturally on reveal */ }
+      });
+    }
+  }
+</script>
+</body>
+</html>
